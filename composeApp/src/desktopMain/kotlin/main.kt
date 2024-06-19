@@ -1,11 +1,13 @@
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import com.belascore.navigation.App
 
-fun main() = application {
-    Window(
-        onCloseRequest = ::exitApplication,
-        title = "BelaScore",
-    ) {
-        App()
+fun main() =
+    application {
+        Window(
+            onCloseRequest = ::exitApplication,
+            title = "BelaScore",
+        ) {
+            App()
+        }
     }
-}
