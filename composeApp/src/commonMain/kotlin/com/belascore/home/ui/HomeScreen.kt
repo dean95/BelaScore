@@ -11,7 +11,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import belascore.composeapp.generated.resources.Res
+import belascore.composeapp.generated.resources.game_history
+import belascore.composeapp.generated.resources.new_game
 import com.belascore.coreUi.Screen
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun HomeScreen(
@@ -33,7 +37,7 @@ fun HomeScreen(
                     .fillMaxWidth()
                     .padding(16.dp),
         ) {
-            Text(text = "New Game")
+            Text(text = stringResource(Res.string.new_game))
         }
         Button(
             onClick = onGameHistoryClick,
@@ -42,7 +46,7 @@ fun HomeScreen(
                     .fillMaxWidth()
                     .padding(16.dp),
         ) {
-            Text(text = "Game History")
+            Text(text = stringResource(Res.string.game_history))
         }
     }
 }
