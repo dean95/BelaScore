@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.belascore.home.ui.HomeScreen
+import com.belascore.newGame.ui.NewGameScreen
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -20,9 +21,15 @@ fun App() {
         ) {
             composable(Screen.Home.route) {
                 HomeScreen(
-                    onNewGameClick = {},
+                    onNewGameClick = {
+                        navController.navigate(Screen.NewGame.route)
+                    },
                     onGameHistoryClick = {},
                 )
+            }
+
+            composable(Screen.NewGame.route) {
+                NewGameScreen()
             }
         }
     }
