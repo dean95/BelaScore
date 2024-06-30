@@ -1,4 +1,4 @@
-package com.belascore.navigation
+package com.belascore.coreUi.navigation
 
 private const val HOME_SCREEN_ROUTE = "Home"
 private const val SCORE_SCREEN_ROUTE = "Score"

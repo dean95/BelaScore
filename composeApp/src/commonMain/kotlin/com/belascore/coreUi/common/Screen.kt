@@ -1,4 +1,4 @@
-package com.belascore.coreUi
+package com.belascore.coreUi.common
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize

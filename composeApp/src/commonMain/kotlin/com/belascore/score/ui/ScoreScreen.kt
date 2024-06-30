@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.belascore.coreUi.Screen
+import com.belascore.coreUi.common.Screen
 
 @Composable
 fun ScoreScreen(

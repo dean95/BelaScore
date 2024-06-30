@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import belascore.composeapp.generated.resources.Res
 import belascore.composeapp.generated.resources.game_history
 import belascore.composeapp.generated.resources.new_game
-import com.belascore.coreUi.Screen
+import com.belascore.coreUi.common.Screen
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

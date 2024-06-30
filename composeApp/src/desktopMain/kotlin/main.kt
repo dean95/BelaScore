@@ -1,8 +1,10 @@
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import com.belascore.navigation.App
+import com.belascore.core.di.initKoin
+import com.belascore.coreUi.App
 
-fun main() =
+fun main() {
+    initKoin()
     application {
         Window(
             onCloseRequest = ::exitApplication,
@@ -11,3 +13,4 @@ fun main() =
             App()
         }
     }
+}

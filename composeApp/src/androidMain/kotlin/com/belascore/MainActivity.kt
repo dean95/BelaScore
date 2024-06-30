@@ -1,4 +1,4 @@
-package com.dean.belascore
+package com.belascore
 
 import android.app.Activity
 import android.os.Bundle
@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.belascore.navigation.App
+import com.belascore.coreUi.App
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
