@@ -20,31 +20,28 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun HomeScreen(
     onNewGameClick: () -> Unit,
-    onGameHistoryClick: () -> Unit,
+    onGameHistoryClick: () -> Unit
 ) = Screen {
     Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Button(
             onClick = onNewGameClick,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
         ) {
             Text(text = stringResource(Res.string.new_game))
         }
         Button(
             onClick = onGameHistoryClick,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
         ) {
             Text(text = stringResource(Res.string.game_history))
         }

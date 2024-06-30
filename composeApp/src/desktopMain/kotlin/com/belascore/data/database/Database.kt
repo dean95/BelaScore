@@ -8,6 +8,6 @@ import java.io.File
 fun getDatabaseBuilder(): RoomDatabase.Builder<GameDatabase> {
     val dbFile = File(System.getProperty("java.io.tmpdir"), "my_room.db")
     return Room.databaseBuilder<GameDatabase>(
-        name = dbFile.absolutePath,
+        name = dbFile.absolutePath
     )
 }

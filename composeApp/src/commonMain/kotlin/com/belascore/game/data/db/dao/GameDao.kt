@@ -1,4 +1,4 @@
-package com.belascore.game.data.db
+package com.belascore.game.data.db.dao
 
 import androidx.room.Dao
 

@@ -13,6 +13,6 @@ fun getDatabaseBuilder(): RoomDatabase.Builder<GameDatabase> {
     return Room
         .databaseBuilder<GameDatabase>(
             name = dbFilePath,
-            factory = { GameDatabase::class.instantiateImpl() },
+            factory = { GameDatabase::class.instantiateImpl() }
         ).setDriver(BundledSQLiteDriver())
 }

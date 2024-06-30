@@ -25,10 +25,9 @@ fun ScoreScreen(
     rounds: List<RoundItemUiState>,
 ) = Screen {
     Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

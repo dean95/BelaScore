@@ -13,10 +13,10 @@ class NewGameViewModel : ViewModel() {
         _uiState.update {
             it.copy(
                 gameOptions =
-                    it.gameOptions.copy(
-                        playerCount = playerCount,
-                        winningScore = playerCount.defaultScore,
-                    ),
+                it.gameOptions.copy(
+                    playerCount = playerCount,
+                    winningScore = playerCount.defaultScore
+                )
             )
         }
     }

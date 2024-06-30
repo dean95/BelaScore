@@ -2,6 +2,7 @@ package com.belascore.game.data.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.belascore.game.data.db.dao.GameDao
 import com.belascore.game.data.db.model.GameEntity
 
 const val DATABASE_NAME = "game_database.db"
