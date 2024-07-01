@@ -18,7 +18,7 @@ fun initKoin(config: KoinAppDeclaration? = null) {
             platformModule,
             newGameModule,
             scoreModule,
-            homeModule,
+            homeModule
         )
     }
 }

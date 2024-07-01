@@ -22,7 +22,7 @@ fun Navigation() {
                     onNewGameClick = {
                         navController.navigate(Screen.NewGame.route)
                     },
-                    onGameHistoryClick = {},
+                    onGameHistoryClick = {}
                 )
             }
 
