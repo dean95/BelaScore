@@ -4,6 +4,6 @@ import com.belascore.data.database.getDatabaseBuilder
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-actual val nativeModule: Module = module {
+actual val platformModule: Module = module {
     single { getDatabaseBuilder() }
 }
