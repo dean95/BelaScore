@@ -12,9 +12,7 @@ interface Db {
 }
 
 @Database(entities = [GameEntity::class], version = 1)
-abstract class GameDatabase :
-    RoomDatabase(),
-    Db {
+abstract class GameDatabase : RoomDatabase(), Db {
     abstract fun gameDao(): GameDao
 
     override fun clearAllTables() {

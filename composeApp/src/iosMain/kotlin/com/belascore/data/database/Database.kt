@@ -10,9 +10,8 @@ import platform.Foundation.NSHomeDirectory
 
 fun getDatabaseBuilder(): RoomDatabase.Builder<GameDatabase> {
     val dbFilePath = NSHomeDirectory() + "/$DATABASE_NAME"
-    return Room
-        .databaseBuilder<GameDatabase>(
-            name = dbFilePath,
-            factory = { GameDatabase::class.instantiateImpl() }
-        ).setDriver(BundledSQLiteDriver())
+    return Room.databaseBuilder<GameDatabase>(
+        name = dbFilePath,
+        factory = { GameDatabase::class.instantiateImpl() }
+    ).setDriver(BundledSQLiteDriver())
 }
