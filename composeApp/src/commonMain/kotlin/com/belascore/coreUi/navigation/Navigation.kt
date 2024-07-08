@@ -15,18 +15,20 @@ fun Navigation() {
 
         NavHost(
             navController = navController,
-            startDestination = Screen.Home.route,
+            startDestination = Home
         ) {
-            composable(Screen.Home.route) {
+            composable<Home> {
                 HomeScreen(
                     onNewGameClick = {
-                        navController.navigate(Screen.NewGame.route)
+                        navController.navigate(NewGame)
                     },
-                    onGameHistoryClick = {}
+                    onGameHistoryClick = {
+                        /* no-op */
+                    }
                 )
             }
 
-            composable(Screen.NewGame.route) {
+            composable<NewGame> {
                 NewGameScreen()
             }
         }
