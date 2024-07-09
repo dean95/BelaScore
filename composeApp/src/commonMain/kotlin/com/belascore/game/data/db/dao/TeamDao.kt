@@ -8,5 +8,5 @@ import com.belascore.game.data.db.model.TeamEntity
 interface TeamDao {
 
     @Insert
-    suspend fun insertTeam(team: TeamEntity): Long
+    suspend fun insertTeam(team: TeamEntity)
 }
