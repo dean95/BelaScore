@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.belascore.home.ui.HomeScreen
 import com.belascore.newGame.ui.NewGameScreen
+import com.belascore.score.ui.ScoreScreen
 
 @Composable
 fun Navigation() {
@@ -29,7 +30,13 @@ fun Navigation() {
             }
 
             composable<NewGame> {
-                NewGameScreen()
+                NewGameScreen {
+                    navController.navigate(Score)
+                }
+            }
+
+            composable<Score> {
+                ScoreScreen(teams = listOf(), rounds = listOf())
             }
         }
     }

@@ -33,47 +33,55 @@ import org.koin.core.annotation.KoinExperimentalAPI
 
 @OptIn(KoinExperimentalAPI::class)
 @Composable
-fun NewGameScreen(viewModel: NewGameViewModel = koinViewModel()) =
-    Screen {
-        val newGameUiState = viewModel.uiState.collectAsState().value
+fun NewGameScreen(
+    viewModel: NewGameViewModel = koinViewModel(),
+    onStartGameClick: () -> Unit
+) = Screen {
+    val newGameUiState = viewModel.uiState.collectAsState().value
 
-        val teams =
-            remember(newGameUiState.gameOptions.playerCount.count) {
-                MutableList(newGameUiState.gameOptions.playerCount.count) { "" }.toMutableStateList()
-            }
+    val teams =
+        remember(newGameUiState.gameOptions.playerCount.count) {
+            MutableList(newGameUiState.gameOptions.playerCount.count) { "" }.toMutableStateList()
+        }
 
-        Column(
-            modifier = Modifier.fillMaxSize().padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+    Column(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = stringResource(Res.string.new_game),
+            fontSize = 24.sp,
+            modifier = Modifier.padding(bottom = 16.dp),
+        )
+
+        WinningScoreSelector(
+            playerCount = newGameUiState.gameOptions.playerCount.count,
+            teams = teams,
+            onTeamNameChange = { index, teamName -> teams[index] = teamName },
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        PlayerCountSelector(
+            count = newGameUiState.gameOptions.playerCount.count,
+            winningScore = newGameUiState.gameOptions.winningScore,
+            onUpdatePlayerCount = viewModel::updatePlayerCount,
+            onUpdateWinningScore = viewModel::updateWinningScore,
+        )
+
+        Button(
+            onClick = {
+                viewModel.createNewGame(
+                    winningScore = newGameUiState.gameOptions.winningScore,
+                    teamNames = teams,
+                    onStartGameClick = onStartGameClick
+                )
+            },
         ) {
-            Text(
-                text = stringResource(Res.string.new_game),
-                fontSize = 24.sp,
-                modifier = Modifier.padding(bottom = 16.dp),
-            )
-
-            WinningScoreSelector(
-                playerCount = newGameUiState.gameOptions.playerCount.count,
-                teams = teams,
-                onTeamNameChange = { index, teamName -> teams[index] = teamName },
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            PlayerCountSelector(
-                count = newGameUiState.gameOptions.playerCount.count,
-                winningScore = newGameUiState.gameOptions.winningScore,
-                onUpdatePlayerCount = viewModel::updatePlayerCount,
-                onUpdateWinningScore = viewModel::updateWinningScore,
-            )
-
-            Button(
-                onClick = { /*TODO()*/ },
-            ) {
-                Text(text = stringResource(Res.string.start_game))
-            }
+            Text(text = stringResource(Res.string.start_game))
         }
     }
+}
 
 @Composable
 fun WinningScoreSelector(

@@ -8,5 +8,5 @@ import com.belascore.game.data.db.model.GameEntity
 interface GameDao {
 
     @Insert
-    suspend fun insert(game: GameEntity)
+    suspend fun insert(game: GameEntity): Long
 }
