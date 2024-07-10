@@ -35,12 +35,13 @@ class NewGameViewModel(
     fun createNewGame(
         winningScore: Int,
         teamNames: List<String>,
-        onStartGameClick: () -> Unit
+        onStartGameClick: (Long) -> Unit
     ) = viewModelScope.launch {
-        gameRepository.insertGame(winningScore)
+        val gameId = gameRepository.insertGame(winningScore)
         teamNames.forEach {
-            teamRepository.insertTeam(it)
+            val teamId = teamRepository.insertTeam(it)
+            gameRepository.insertGameTeamCrossRef(gameId, teamId)
         }
-        onStartGameClick()
+        onStartGameClick(gameId)
     }
 }

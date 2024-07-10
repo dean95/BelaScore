@@ -12,13 +12,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import belascore.composeapp.generated.resources.Res
 import belascore.composeapp.generated.resources.new_game
 import belascore.composeapp.generated.resources.number_of_players
@@ -28,16 +29,13 @@ import com.belascore.coreUi.common.Screen
 import com.belascore.newGame.ui.components.SelectableButton
 import com.belascore.newGame.ui.components.TeamNameInput
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.annotation.KoinExperimentalAPI
 
-@OptIn(KoinExperimentalAPI::class)
 @Composable
 fun NewGameScreen(
-    viewModel: NewGameViewModel = koinViewModel(),
-    onStartGameClick: () -> Unit
+    viewModel: NewGameViewModel,
+    onStartGameClick: (Long) -> Unit
 ) = Screen {
-    val newGameUiState = viewModel.uiState.collectAsState().value
+    val newGameUiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val teams =
         remember(newGameUiState.gameOptions.playerCount.count) {

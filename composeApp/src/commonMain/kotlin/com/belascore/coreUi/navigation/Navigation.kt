@@ -5,10 +5,15 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.belascore.home.ui.HomeScreen
 import com.belascore.newGame.ui.NewGameScreen
 import com.belascore.score.ui.ScoreScreen
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
+import org.koin.core.parameter.parametersOf
 
+@OptIn(KoinExperimentalAPI::class)
 @Composable
 fun Navigation() {
     MaterialTheme {
@@ -30,13 +35,18 @@ fun Navigation() {
             }
 
             composable<NewGame> {
-                NewGameScreen {
-                    navController.navigate(Score)
+                NewGameScreen(
+                    viewModel = koinViewModel()
+                ) {
+                    navController.navigate(Score(gameId = it))
                 }
             }
 
             composable<Score> {
-                ScoreScreen(teams = listOf(), rounds = listOf())
+                val args = it.toRoute<Score>()
+                ScoreScreen(
+                    viewModel = koinViewModel(parameters = { parametersOf(args.gameId) })
+                )
             }
         }
     }

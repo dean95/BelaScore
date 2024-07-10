@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "572b92b13357bb1a4ec46c2d042f2236",
+    "identityHash": "cc674e3c111bc3d2d3cf8f9c758d0f1f",
     "entities": [
       {
         "tableName": "GameEntity",
@@ -88,11 +88,56 @@
             "teamId"
           ]
         }
+      },
+      {
+        "tableName": "GameTeamCrossRef",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`gameId` INTEGER NOT NULL, `teamId` INTEGER NOT NULL, PRIMARY KEY(`gameId`, `teamId`))",
+        "fields": [
+          {
+            "fieldPath": "gameId",
+            "columnName": "gameId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "teamId",
+            "columnName": "teamId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "gameId",
+            "teamId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_GameTeamCrossRef_gameId",
+            "unique": false,
+            "columnNames": [
+              "gameId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_GameTeamCrossRef_gameId` ON `${TABLE_NAME}` (`gameId`)"
+          },
+          {
+            "name": "index_GameTeamCrossRef_teamId",
+            "unique": false,
+            "columnNames": [
+              "teamId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_GameTeamCrossRef_teamId` ON `${TABLE_NAME}` (`teamId`)"
+          }
+        ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '572b92b13357bb1a4ec46c2d042f2236')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cc674e3c111bc3d2d3cf8f9c758d0f1f')"
     ]
   }
 }

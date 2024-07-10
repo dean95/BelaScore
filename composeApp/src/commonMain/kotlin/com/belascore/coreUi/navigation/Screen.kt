@@ -9,4 +9,6 @@ data object Home
 data object NewGame
 
 @Serializable
-data object Score
+data class Score(
+    val gameId: Long
+)

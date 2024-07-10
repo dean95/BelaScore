@@ -6,6 +6,7 @@ import com.belascore.game.data.db.dao.GameDao
 import com.belascore.game.data.db.dao.ScoreDao
 import com.belascore.game.data.db.dao.TeamDao
 import com.belascore.game.data.db.model.GameEntity
+import com.belascore.game.data.db.model.GameTeamCrossRef
 import com.belascore.game.data.db.model.ScoreEntity
 import com.belascore.game.data.db.model.TeamEntity
 
@@ -16,7 +17,7 @@ interface Db {
 }
 
 @Database(
-    entities = [GameEntity::class, TeamEntity::class, ScoreEntity::class],
+    entities = [GameEntity::class, TeamEntity::class, ScoreEntity::class, GameTeamCrossRef::class],
     version = 1
 )
 abstract class GameDatabase : RoomDatabase(), Db {
