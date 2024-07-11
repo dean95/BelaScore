@@ -36,17 +36,19 @@ fun Navigation() {
 
             composable<NewGame> {
                 NewGameScreen(
-                    viewModel = koinViewModel()
-                ) {
-                    navController.navigate(Score(gameId = it))
-                }
+                    viewModel = koinViewModel(),
+                    onStartGameClick = { navController.navigate(Score(gameId = it)) },
+                    onBackClick = { navController.navigateUp() }
+                )
             }
 
             composable<Score> {
                 val args = it.toRoute<Score>()
                 ScoreScreen(
                     viewModel = koinViewModel(parameters = { parametersOf(args.gameId) })
-                )
+                ) {
+                    navController.navigateUp()
+                }
             }
         }
     }

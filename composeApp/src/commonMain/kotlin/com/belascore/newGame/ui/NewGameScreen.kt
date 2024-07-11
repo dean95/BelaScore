@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,7 +26,9 @@ import belascore.composeapp.generated.resources.new_game
 import belascore.composeapp.generated.resources.number_of_players
 import belascore.composeapp.generated.resources.start_game
 import belascore.composeapp.generated.resources.winning_score
+import com.belascore.coreUi.common.BackIcon
 import com.belascore.coreUi.common.Screen
+import com.belascore.coreUi.common.TopBar
 import com.belascore.newGame.ui.components.SelectableButton
 import com.belascore.newGame.ui.components.TeamNameInput
 import org.jetbrains.compose.resources.stringResource
@@ -33,7 +36,8 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun NewGameScreen(
     viewModel: NewGameViewModel,
-    onStartGameClick: (Long) -> Unit
+    onStartGameClick: (Long) -> Unit,
+    onBackClick: () -> Unit
 ) = Screen {
     val newGameUiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -42,41 +46,45 @@ fun NewGameScreen(
             MutableList(newGameUiState.gameOptions.playerCount.count) { "" }.toMutableStateList()
         }
 
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(
-            text = stringResource(Res.string.new_game),
-            fontSize = 24.sp,
-            modifier = Modifier.padding(bottom = 16.dp),
-        )
-
-        WinningScoreSelector(
-            playerCount = newGameUiState.gameOptions.playerCount.count,
-            teams = teams,
-            onTeamNameChange = { index, teamName -> teams[index] = teamName },
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        PlayerCountSelector(
-            count = newGameUiState.gameOptions.playerCount.count,
-            winningScore = newGameUiState.gameOptions.winningScore,
-            onUpdatePlayerCount = viewModel::updatePlayerCount,
-            onUpdateWinningScore = viewModel::updateWinningScore,
-        )
-
-        Button(
-            onClick = {
-                viewModel.createNewGame(
-                    winningScore = newGameUiState.gameOptions.winningScore,
-                    teamNames = teams,
-                    onStartGameClick = onStartGameClick
-                )
-            },
+    Scaffold(
+        topBar = {
+            TopBar(
+                title = stringResource(Res.string.new_game),
+                navigationIcon = { BackIcon(onBackClick = onBackClick) }
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier.fillMaxSize().padding(paddingValues),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(text = stringResource(Res.string.start_game))
+
+            WinningScoreSelector(
+                playerCount = newGameUiState.gameOptions.playerCount.count,
+                teams = teams,
+                onTeamNameChange = { index, teamName -> teams[index] = teamName },
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            PlayerCountSelector(
+                count = newGameUiState.gameOptions.playerCount.count,
+                winningScore = newGameUiState.gameOptions.winningScore,
+                onUpdatePlayerCount = viewModel::updatePlayerCount,
+                onUpdateWinningScore = viewModel::updateWinningScore,
+            )
+
+            Button(
+                onClick = {
+                    viewModel.createNewGame(
+                        winningScore = newGameUiState.gameOptions.winningScore,
+                        teamNames = teams,
+                        onStartGameClick = onStartGameClick
+                    )
+                },
+            ) {
+                Text(text = stringResource(Res.string.start_game))
+            }
         }
     }
 }
