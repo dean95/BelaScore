@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "cc674e3c111bc3d2d3cf8f9c758d0f1f",
+    "identityHash": "0ad96493e899469bb4b7c8e43a30cc4d",
     "entities": [
       {
         "tableName": "GameEntity",
@@ -54,7 +54,7 @@
       },
       {
         "tableName": "ScoreEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`gameId` INTEGER NOT NULL, `teamId` INTEGER NOT NULL, `roundNumber` INTEGER NOT NULL, `score` INTEGER NOT NULL, PRIMARY KEY(`gameId`, `teamId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`gameId` INTEGER NOT NULL, `teamId` INTEGER NOT NULL, `roundNumber` INTEGER NOT NULL, `score` INTEGER NOT NULL, PRIMARY KEY(`gameId`, `teamId`, `roundNumber`))",
         "fields": [
           {
             "fieldPath": "gameId",
@@ -85,7 +85,8 @@
           "autoGenerate": false,
           "columnNames": [
             "gameId",
-            "teamId"
+            "teamId",
+            "roundNumber"
           ]
         }
       },
@@ -137,7 +138,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'cc674e3c111bc3d2d3cf8f9c758d0f1f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0ad96493e899469bb4b7c8e43a30cc4d')"
     ]
   }
 }

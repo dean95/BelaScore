@@ -7,10 +7,10 @@ data class ScoreUiState(
 
 data class RoundItemUiState(
     val roundNumber: Int,
-    val scores: Map<String, Int>,
+    val scores: Map<Long, Int>
 )
 
 data class TeamUiState(
     val id: Long,
-    val name: String,
+    val name: String
 )

@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface ScoreRepository {
 
-    suspend fun insertScore(score: Score)
+    suspend fun insertScores(scores: List<Score>)
 
-    fun getScoresByGameAndTeam(gameId: Int, teamId: Int): Flow<List<Score>>
+    fun getScoresByGame(gameId: Long): Flow<List<Score>>
 }

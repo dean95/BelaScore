@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.Flow
 interface ScoreDao {
 
     @Insert
-    suspend fun insertScore(score: ScoreEntity)
+    suspend fun insertScores(scores: List<ScoreEntity>)
 
-    @Query("SELECT * FROM scoreEntity WHERE gameId = :gameId AND teamId = :teamId")
-    fun getScoresByGameAndTeam(gameId: Int, teamId: Int): Flow<List<ScoreEntity>>
+    @Query("SELECT * FROM scoreEntity WHERE gameId = :gameId")
+    fun getScoresByGame(gameId: Long): Flow<List<ScoreEntity>>
 }
