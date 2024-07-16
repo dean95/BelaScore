@@ -26,6 +26,7 @@ import belascore.composeapp.generated.resources.cancel
 import belascore.composeapp.generated.resources.confirm
 import belascore.composeapp.generated.resources.team_score
 import com.belascore.game.domain.model.DeclarationType
+import com.belascore.game.domain.model.SpecialPoints
 import com.belascore.score.ui.TeamUiState
 import org.jetbrains.compose.resources.stringResource
 
@@ -102,6 +103,20 @@ fun ScoreInputBottomSheet(
                         DeclarationStepper(
                             declarationType = DeclarationType.TWO_HUNDRED,
                             onCountChange = {
+                                /* no-op */
+                            }
+                        )
+
+                        SpecialPointsSwitch(
+                            specialPoints = SpecialPoints.BELA,
+                            onCheckedChange = {
+                                /* no-op */
+                            }
+                        )
+
+                        SpecialPointsSwitch(
+                            specialPoints = SpecialPoints.STIGLJA,
+                            onCheckedChange = {
                                 /* no-op */
                             }
                         )
