@@ -4,19 +4,23 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -29,9 +33,11 @@ import belascore.composeapp.generated.resources.cd_add_scores
 import com.belascore.coreUi.common.BackIcon
 import com.belascore.coreUi.common.Screen
 import com.belascore.coreUi.common.TopBar
-import com.belascore.score.ui.components.ScoreInputDialog
+import com.belascore.score.ui.components.ScoreInputBottomSheet
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScoreScreen(
     viewModel: ScoreViewModel,
@@ -39,7 +45,11 @@ fun ScoreScreen(
 ) = Screen {
     val scoreUiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    var showDialog by rememberSaveable { mutableStateOf(false) }
+    var showBottomSheet by rememberSaveable { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = false
+    )
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -47,7 +57,9 @@ fun ScoreScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { showDialog = true }
+                onClick = {
+                    showBottomSheet = true
+                }
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
@@ -95,17 +107,21 @@ fun ScoreScreen(
             }
         }
 
-        if (showDialog) {
-            ScoreInputDialog(
-                teams = scoreUiState.teams,
-                onDismissRequest = { showDialog = false },
+        if (showBottomSheet) {
+            ScoreInputBottomSheet(
+                sheetState = sheetState,
+                onDismissRequest = { showBottomSheet = false },
                 onConfirm = { scoresMap ->
-                    viewModel.updateScores(scoresMap, scoreUiState.rounds.size + 1)
-                    showDialog = false
-                }
+                    scope.launch { sheetState.hide() }.invokeOnCompletion {
+                        if (!sheetState.isVisible) {
+                            viewModel.updateScores(scoresMap, scoreUiState.rounds.size + 1)
+                            showBottomSheet = false
+                        }
+                    }
+                },
+                teams = scoreUiState.teams,
+                modifier = Modifier.fillMaxHeight(),
             )
         }
     }
 }
-
-
