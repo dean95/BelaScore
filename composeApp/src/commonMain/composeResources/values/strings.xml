@@ -8,7 +8,10 @@
     <string name="team_name">Team %1$d Name</string>
     <string name="team_score">%1$s Score</string>
     <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
 
     <string name="cd_back">Back</string>
     <string name="cd_add_scores">Add Scores</string>
+    <string name="cd_decrease">Decrease</string>
+    <string name="cd_increase">Increase</string>
 </resources>

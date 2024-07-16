@@ -47,7 +47,7 @@ fun ScoreScreen(
 
     var showBottomSheet by rememberSaveable { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = false
+        skipPartiallyExpanded = true
     )
     val scope = rememberCoroutineScope()
 
@@ -110,9 +110,19 @@ fun ScoreScreen(
         if (showBottomSheet) {
             ScoreInputBottomSheet(
                 sheetState = sheetState,
-                onDismissRequest = { showBottomSheet = false },
+                onDismissRequest = {
+                    scope.launch {
+                        sheetState.hide()
+                    }.invokeOnCompletion {
+                        if (!sheetState.isVisible) {
+                            showBottomSheet = false
+                        }
+                    }
+                },
                 onConfirm = { scoresMap ->
-                    scope.launch { sheetState.hide() }.invokeOnCompletion {
+                    scope.launch {
+                        sheetState.hide()
+                    }.invokeOnCompletion {
                         if (!sheetState.isVisible) {
                             viewModel.updateScores(scoresMap, scoreUiState.rounds.size + 1)
                             showBottomSheet = false
@@ -120,7 +130,7 @@ fun ScoreScreen(
                     }
                 },
                 teams = scoreUiState.teams,
-                modifier = Modifier.fillMaxHeight(),
+                modifier = Modifier.fillMaxHeight()
             )
         }
     }

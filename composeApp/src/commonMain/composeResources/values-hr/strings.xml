@@ -8,7 +8,10 @@
     <string name="team_name">Naziv Tima %1$d</string>
     <string name="team_score">Rezultat tima %1$s</string>
     <string name="confirm">Potvrdi</string>
+    <string name="cancel">Odustani</string>
 
     <string name="cd_back">Natrag</string>
     <string name="cd_add_scores">Dodaj rezultate</string>
+    <string name="cd_decrease">Smanjenje</string>
+    <string name="cd_increase">Povećanje</string>
 </resources>
