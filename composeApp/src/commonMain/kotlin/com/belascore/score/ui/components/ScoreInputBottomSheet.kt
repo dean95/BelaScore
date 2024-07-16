@@ -7,12 +7,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import belascore.composeapp.generated.resources.Res
 import belascore.composeapp.generated.resources.cancel
@@ -41,7 +38,7 @@ fun ScoreInputBottomSheet(
     onConfirm: (Map<Long, Int>) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var scoresInput by remember { mutableStateOf(teams.associate { it.id to "" }) }
+    var scoresInput by remember { mutableStateOf(teams.associate { it.id to 0 }) }
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -66,13 +63,12 @@ fun ScoreInputBottomSheet(
                         modifier = Modifier.padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        OutlinedTextField(
+                        ScoreInput(
                             value = scoresInput.getValue(team.id),
+                            label = stringResource(Res.string.team_score, team.name),
                             onValueChange = { newValue ->
-                                scoresInput = scoresInput.toMutableMap().apply { put(team.id, newValue) }
-                            },
-                            label = { Text(stringResource(Res.string.team_score, team.name)) },
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                                scoresInput = scoresInput.toMutableMap().apply { put(team.id, newValue.toInt()) }
+                            }
                         )
 
                         DeclarationStepper(
@@ -127,10 +123,7 @@ fun ScoreInputBottomSheet(
                 Spacer(modifier = Modifier.width(16.dp))
 
                 Button(
-                    onClick = {
-                        val scoresMap = scoresInput.mapValues { (_, scoreString) -> scoreString.toInt() }
-                        onConfirm(scoresMap)
-                    }
+                    onClick = { onConfirm(scoresInput) }
                 ) {
                     Text(text = stringResource(Res.string.confirm))
                 }
