@@ -22,6 +22,7 @@ class NewGameViewModel(
                 gameOptions =
                 it.gameOptions.copy(
                     playerCount = playerCount,
+                    teamCount = if (playerCount == PlayerCount.THREE) 3 else 2,
                     winningScore = playerCount.defaultScore
                 )
             )

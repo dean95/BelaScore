@@ -6,6 +6,6 @@ data class NewGameUiState(
 
 data class GameOptionsUiState(
     val playerCount: PlayerCount = PlayerCount.TWO,
-    val teamCount: Int = if (playerCount == PlayerCount.THREE) 3 else 2,
+    val teamCount: Int = 2,
     val winningScore: Int = playerCount.defaultScore
 )
