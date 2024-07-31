@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 
-private const val MAX_SCORE_LENGTH = 3
+private const val MAX_SCORE = 162
 
 @Composable
 fun ScoreInput(
@@ -20,7 +20,7 @@ fun ScoreInput(
         modifier = modifier,
         value = value.toString(),
         onValueChange = { newValue ->
-            if (newValue.length <= MAX_SCORE_LENGTH && newValue.all(Char::isDigit)) {
+            if (newValue.all(Char::isDigit) && newValue.toInt() <= MAX_SCORE) {
                 onValueChange(newValue.ifBlank { "0" })
             }
         },
