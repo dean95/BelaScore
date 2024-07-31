@@ -41,10 +41,10 @@ fun NewGameScreen(
 ) = Screen {
     val newGameUiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val teams =
-        remember(newGameUiState.gameOptions.playerCount.count) {
-            MutableList(newGameUiState.gameOptions.playerCount.count) { "" }.toMutableStateList()
-        }
+    val teamCount = newGameUiState.gameOptions.teamCount
+    val teams = remember(teamCount) {
+        MutableList(teamCount) { "" }.toMutableStateList()
+    }
 
     Scaffold(
         topBar = {
