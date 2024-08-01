@@ -119,12 +119,17 @@ fun ScoreScreen(
                         }
                     }
                 },
-                onConfirm = { scoresMap ->
+                onConfirm = { teamScores, teamDeclarations, teamSpecialPoints ->
                     scope.launch {
                         sheetState.hide()
                     }.invokeOnCompletion {
                         if (!sheetState.isVisible) {
-                            viewModel.updateScores(scoresMap, scoreUiState.rounds.size + 1)
+                            viewModel.updateScores(
+                                teamScores = teamScores,
+                                teamDeclarations = teamDeclarations,
+                                teamSpecialPoints = teamSpecialPoints,
+                                roundNumber = scoreUiState.rounds.size + 1
+                            )
                             showBottomSheet = false
                         }
                     }

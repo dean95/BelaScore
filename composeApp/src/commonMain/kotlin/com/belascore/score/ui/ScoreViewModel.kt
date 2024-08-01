@@ -2,7 +2,9 @@ package com.belascore.score.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.belascore.game.domain.model.DeclarationType
 import com.belascore.game.domain.model.Score
+import com.belascore.game.domain.model.SpecialPoints
 import com.belascore.game.domain.repository.ScoreRepository
 import com.belascore.game.domain.repository.TeamRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,7 +41,8 @@ class ScoreViewModel(
                 val roundItems = groupedByRound.map { (round, scores) ->
                     val teamScores = scores.associateBy(Score::teamId)
                     RoundItemUiState(
-                        roundNumber = round, scores = teamScores.mapValues { (_, score) -> score.score }
+                        roundNumber = round,
+                        scores = teamScores.mapValues { (_, score) -> score.score }
                     )
                 }.sortedBy(RoundItemUiState::roundNumber)
 
@@ -53,13 +56,27 @@ class ScoreViewModel(
         }
     }
 
-    fun updateScores(scores: Map<Long, Int>, roundNumber: Int) = viewModelScope.launch {
+    fun updateScores(
+        teamScores: Map<Long, Int>,
+        teamDeclarations: Map<Long, Map<DeclarationType, Int>>,
+        teamSpecialPoints: Map<Long, Set<SpecialPoints>>,
+        roundNumber: Int
+    ) = viewModelScope.launch {
+        val declarationsScoresByTeam = teamDeclarations.mapValues { (_, declarations) ->
+            declarations.map { (declaration, count) -> declaration.points * count }.sum()
+        }
+
+        val specialPointsScoresByTeam =
+            teamSpecialPoints.mapValues { (_, specialPoints) -> specialPoints.sumOf(SpecialPoints::points) }
+
         scoreRepository.insertScores(
-            scores.map { (teamId, score) ->
+            teamScores.map { (teamId, score) ->
                 Score(
                     gameId = gameId,
                     teamId = teamId,
-                    score = score,
+                    score = score +
+                            declarationsScoresByTeam.getValue(teamId) +
+                            specialPointsScoresByTeam.getValue(teamId),
                     roundNumber = roundNumber
                 )
             }

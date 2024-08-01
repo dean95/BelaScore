@@ -39,10 +39,16 @@ fun ScoreInputBottomSheet(
     sheetState: SheetState,
     teams: List<TeamUiState>,
     onDismissRequest: () -> Unit,
-    onConfirm: (Map<Long, Int>) -> Unit,
+    onConfirm: (
+        Map<Long, Int>,
+        Map<Long, Map<DeclarationType, Int>>,
+        Map<Long, Set<SpecialPoints>>
+    ) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var scoresInput by remember { mutableStateOf(teams.associate { it.id to 0 }) }
+    var teamScores by remember { mutableStateOf(teams.associate { it.id to 0 }) }
+    var teamDeclarations by remember { mutableStateOf(teams.associate { it.id to mutableMapOf<DeclarationType, Int>() }) }
+    var teamSpecialPoints by remember { mutableStateOf(teams.associate { it.id to mutableSetOf<SpecialPoints>() }) }
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -71,24 +77,24 @@ fun ScoreInputBottomSheet(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         ScoreInput(
-                            value = scoresInput.getValue(team.id),
+                            value = teamScores.getValue(team.id),
                             label = stringResource(Res.string.team_score, team.name),
                             onValueChange = { newValue ->
                                 val newScore = newValue.toInt()
 
-                                if (scoresInput.size == 2) {
+                                if (teamScores.size == 2) {
                                     val otherTeamId = teams.find {
                                         it.id != team.id
                                     }?.id ?: error("Team not found")
 
                                     val remainingScore = MAX_SCORE_WITHOUT_SPECIAL_POINTS - newScore
 
-                                    scoresInput = scoresInput.toMutableMap().apply {
+                                    teamScores = teamScores.toMutableMap().apply {
                                         put(team.id, newScore)
                                         put(otherTeamId, remainingScore)
                                     }
                                 } else {
-                                    scoresInput = scoresInput.toMutableMap().apply {
+                                    teamScores = teamScores.toMutableMap().apply {
                                         put(team.id, newScore)
                                     }
                                 }
@@ -97,50 +103,72 @@ fun ScoreInputBottomSheet(
 
                         DeclarationStepper(
                             declarationType = DeclarationType.TWENTY,
-                            onCountChange = {
-                                /* no-op */
+                            onCountChange = { count ->
+                                teamDeclarations = teamDeclarations.toMutableMap().apply {
+                                    getValue(team.id)[DeclarationType.TWENTY] = count
+                                }
                             }
                         )
 
                         DeclarationStepper(
                             declarationType = DeclarationType.FIFTY,
-                            onCountChange = {
-                                /* no-op */
+                            onCountChange = { count ->
+                                teamDeclarations = teamDeclarations.toMutableMap().apply {
+                                    getValue(team.id)[DeclarationType.FIFTY] = count
+                                }
                             }
                         )
 
                         DeclarationStepper(
                             declarationType = DeclarationType.HUNDRED,
-                            onCountChange = {
-                                /* no-op */
+                            onCountChange = { count ->
+                                teamDeclarations = teamDeclarations.toMutableMap().apply {
+                                    getValue(team.id)[DeclarationType.HUNDRED] = count
+                                }
                             }
                         )
 
                         DeclarationStepper(
                             declarationType = DeclarationType.ONE_FIFTY,
-                            onCountChange = {
-                                /* no-op */
+                            onCountChange = { count ->
+                                teamDeclarations = teamDeclarations.toMutableMap().apply {
+                                    getValue(team.id)[DeclarationType.ONE_FIFTY] = count
+                                }
                             }
                         )
 
                         DeclarationStepper(
                             declarationType = DeclarationType.TWO_HUNDRED,
-                            onCountChange = {
-                                /* no-op */
+                            onCountChange = { count ->
+                                teamDeclarations = teamDeclarations.toMutableMap().apply {
+                                    getValue(team.id)[DeclarationType.TWO_HUNDRED] = count
+                                }
                             }
                         )
 
                         SpecialPointsSwitch(
                             specialPoints = SpecialPoints.BELA,
-                            onCheckedChange = {
-                                /* no-op */
+                            onCheckedChange = { checked ->
+                                teamSpecialPoints = teamSpecialPoints.toMutableMap().apply {
+                                    if (checked) {
+                                        getValue(team.id).add(SpecialPoints.BELA)
+                                    } else {
+                                        getValue(team.id).remove(SpecialPoints.BELA)
+                                    }
+                                }
                             }
                         )
 
                         SpecialPointsSwitch(
                             specialPoints = SpecialPoints.STIGLJA,
-                            onCheckedChange = {
-                                /* no-op */
+                            onCheckedChange = { checked ->
+                                teamSpecialPoints = teamSpecialPoints.toMutableMap().apply {
+                                    if (checked) {
+                                        getValue(team.id).add(SpecialPoints.STIGLJA)
+                                    } else {
+                                        getValue(team.id).remove(SpecialPoints.STIGLJA)
+                                    }
+                                }
                             }
                         )
                     }
@@ -161,7 +189,13 @@ fun ScoreInputBottomSheet(
                 Spacer(modifier = Modifier.width(16.dp))
 
                 Button(
-                    onClick = { onConfirm(scoresInput) }
+                    onClick = {
+                        onConfirm(
+                            teamScores,
+                            teamDeclarations,
+                            teamSpecialPoints
+                        )
+                    }
                 ) {
                     Text(text = stringResource(Res.string.confirm))
                 }
