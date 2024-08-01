@@ -12,10 +12,11 @@ internal class ScoreRepositoryImpl(
     private val dbMapper: DbMapper
 ) : ScoreRepository {
 
-    override suspend fun insertScores(scores: List<Score>) = scoreDao.insertScores(scores.map(dbMapper::toScoreEntity))
+    override suspend fun insertScores(scores: List<Score>) =
+        scoreDao.insertScores(scores.map(dbMapper::toScoreEntity))
 
-    override fun getScoresByGame(gameId: Long): Flow<List<Score>> =
+    override fun observeScoresByGame(gameId: Long): Flow<List<Score>> =
         scoreDao
-            .getScoresByGame(gameId = gameId)
+            .observeScoresByGame(gameId = gameId)
             .map { it.map(dbMapper::fromScoreEntity) }
 }

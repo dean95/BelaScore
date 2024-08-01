@@ -13,7 +13,10 @@ interface TeamDao {
     @Insert
     suspend fun insertTeam(team: TeamEntity): Long
 
+    @Query("SELECT * FROM TeamEntity WHERE id = :teamId")
+    fun observeTeamById(teamId: Long): Flow<TeamEntity>
+
     @Transaction
     @Query("SELECT * FROM TeamEntity WHERE id IN (SELECT teamId FROM GameTeamCrossRef WHERE gameId = :gameId)")
-    fun getTeamsForGame(gameId: Long): Flow<List<TeamEntity>>
+    fun observeTeamsForGame(gameId: Long): Flow<List<TeamEntity>>
 }

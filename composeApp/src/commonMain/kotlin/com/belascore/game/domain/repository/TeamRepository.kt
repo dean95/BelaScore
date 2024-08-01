@@ -7,5 +7,5 @@ interface TeamRepository {
 
     suspend fun insertTeam(name: String): Long
 
-    fun getTeamsForGame(gameId: Long): Flow<List<Team>>
+    fun observeTeamsForGame(gameId: Long): Flow<List<Team>>
 }

@@ -15,9 +15,9 @@ internal class TeamRepositoryImpl(
 
     override suspend fun insertTeam(name: String): Long = teamDao.insertTeam(TeamEntity(name = name))
 
-    override fun getTeamsForGame(gameId: Long): Flow<List<Team>> =
+    override fun observeTeamsForGame(gameId: Long): Flow<List<Team>> =
         teamDao
-            .getTeamsForGame(gameId)
+            .observeTeamsForGame(gameId)
             .map { teams ->
                 teams.map(dbMapper::fromTeamEntity)
             }

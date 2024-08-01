@@ -26,8 +26,8 @@ class ScoreViewModel(
     init {
         viewModelScope.launch {
             combine(
-                teamRepository.getTeamsForGame(gameId),
-                scoreRepository.getScoresByGame(gameId)
+                teamRepository.observeTeamsForGame(gameId),
+                scoreRepository.observeScoresByGame(gameId)
             ) { teams, scores ->
                 val teamItems = teams.map { team ->
                     TeamUiState(

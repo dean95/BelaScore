@@ -13,5 +13,5 @@ interface ScoreDao {
     suspend fun insertScores(scores: List<ScoreEntity>)
 
     @Query("SELECT * FROM scoreEntity WHERE gameId = :gameId")
-    fun getScoresByGame(gameId: Long): Flow<List<ScoreEntity>>
+    fun observeScoresByGame(gameId: Long): Flow<List<ScoreEntity>>
 }

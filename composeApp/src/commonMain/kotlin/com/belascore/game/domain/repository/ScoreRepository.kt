@@ -7,5 +7,5 @@ interface ScoreRepository {
 
     suspend fun insertScores(scores: List<Score>)
 
-    fun getScoresByGame(gameId: Long): Flow<List<Score>>
+    fun observeScoresByGame(gameId: Long): Flow<List<Score>>
 }
