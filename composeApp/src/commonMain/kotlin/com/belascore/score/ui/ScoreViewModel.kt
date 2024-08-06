@@ -59,8 +59,12 @@ class ScoreViewModel(
     }
 
     fun quitGame() = viewModelScope.launch {
-        gameRepository.endGame(gameId)
-        // TODO Delete game data for the unfinished game
+        gameRepository.deleteGame(gameId)
+        _uiState.update { scoreUiState ->
+            scoreUiState.copy(
+                quitGame = true
+            )
+        }
     }
 
     private fun observeTeamsAndScores() = viewModelScope.launch {

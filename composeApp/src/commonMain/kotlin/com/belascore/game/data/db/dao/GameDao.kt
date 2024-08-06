@@ -21,4 +21,10 @@ interface GameDao {
 
     @Query("UPDATE GameEntity SET isInProgress = 0 WHERE id = :gameId")
     suspend fun endGame(gameId: Long)
+
+    @Query("DELETE FROM GameEntity WHERE id = :gameId")
+    suspend fun deleteGame(gameId: Long)
+
+    @Query("DELETE FROM GameTeamCrossRef WHERE gameId = :gameId")
+    suspend fun deleteGameTeamCrossRefsForGame(gameId: Long)
 }

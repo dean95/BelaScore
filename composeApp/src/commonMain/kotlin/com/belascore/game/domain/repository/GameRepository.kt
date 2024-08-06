@@ -12,4 +12,6 @@ interface GameRepository {
     fun observeWinningTeams(gameId: Long): Flow<List<Team>>
 
     suspend fun endGame(gameId: Long)
+
+    suspend fun deleteGame(gameId: Long)
 }

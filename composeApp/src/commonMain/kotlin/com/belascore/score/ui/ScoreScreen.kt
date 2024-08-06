@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -183,10 +184,15 @@ fun ScoreScreen(
                 onConfirmQuit = {
                     viewModel.quitGame()
                     showQuitConfirmation = false
-                    onBackClick()
                 },
                 onDismiss = { showQuitConfirmation = false }
             )
+        }
+
+        if (scoreUiState.quitGame) {
+            LaunchedEffect(Unit) {
+                onBackClick()
+            }
         }
     }
 }

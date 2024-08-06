@@ -9,9 +9,12 @@ import com.belascore.game.data.db.model.GameTeamCrossRef
 import com.belascore.game.data.db.model.ScoreEntity
 import com.belascore.game.domain.model.Team
 import com.belascore.game.domain.repository.GameRepository
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.supervisorScope
 
 internal class GameRepositoryImpl(
     private val gameDao: GameDao,
@@ -53,4 +56,14 @@ internal class GameRepositoryImpl(
         }
 
     override suspend fun endGame(gameId: Long) = gameDao.endGame(gameId)
+
+    override suspend fun deleteGame(gameId: Long) {
+        supervisorScope {
+            awaitAll(
+                async { gameDao.deleteGame(gameId) },
+                async { gameDao.deleteGameTeamCrossRefsForGame(gameId) },
+                async { scoreDao.deleteScoresForGame(gameId) }
+            )
+        }
+    }
 }
