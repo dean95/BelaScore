@@ -11,6 +11,8 @@
     <string name="cancel">Odustani</string>
     <string name="bela">Bela</string>
     <string name="stiglja">Štiglja</string>
+    <string name="got_it">U redu</string>
+    <string name="winner">Pobjednik</string>
 
     <string name="cd_back">Natrag</string>
     <string name="cd_add_scores">Dodaj rezultate</string>

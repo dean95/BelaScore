@@ -36,6 +36,7 @@ import belascore.composeapp.generated.resources.cd_add_scores
 import com.belascore.coreUi.common.BackIcon
 import com.belascore.coreUi.common.Screen
 import com.belascore.coreUi.common.TopBar
+import com.belascore.score.ui.components.GameResultDialog
 import com.belascore.score.ui.components.ScoreInputBottomSheet
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -148,8 +149,14 @@ fun ScoreScreen(
             )
         }
 
-        if (scoreUiState.winningTeams.isNotEmpty()) {
-            // TODO Show dialog
+        if (!isGameInProgress) {
+            var showDialog by rememberSaveable { mutableStateOf(true) }
+            if (showDialog) {
+                GameResultDialog(
+                    winningTeams = scoreUiState.winningTeams,
+                    onConfirmation = { showDialog = false }
+                )
+            }
         }
     }
 }
