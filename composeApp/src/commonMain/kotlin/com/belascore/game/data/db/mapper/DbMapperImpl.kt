@@ -11,7 +11,8 @@ internal class DbMapperImpl : DbMapper {
     override fun toGameEntity(game: Game) =
         GameEntity(
             id = game.id,
-            winningScore = game.winningScore
+            winningScore = game.winningScore,
+            isInProgress = game.isInProgress
         )
 
     override fun toTeamEntity(team: Team) =
@@ -30,7 +31,8 @@ internal class DbMapperImpl : DbMapper {
 
     override fun fromGameEntity(entity: GameEntity) = Game(
         id = entity.id,
-        winningScore = entity.winningScore
+        winningScore = entity.winningScore,
+        isInProgress = entity.isInProgress
     )
 
     override fun fromTeamEntity(entity: TeamEntity) =

@@ -21,7 +21,12 @@ internal class GameRepositoryImpl(
 ) : GameRepository {
 
     override suspend fun insertGame(winningScore: Int): Long =
-        gameDao.insert(GameEntity(winningScore = winningScore))
+        gameDao.insert(
+            GameEntity(
+                winningScore = winningScore,
+                isInProgress = true
+            )
+        )
 
     override suspend fun insertGameTeamCrossRef(gameId: Long, teamId: Long) =
         gameDao
@@ -46,4 +51,6 @@ internal class GameRepositoryImpl(
                     dbMapper.fromTeamEntity(winningTeam)
                 }
         }
+
+    override suspend fun endGame(gameId: Long) = gameDao.endGame(gameId)
 }

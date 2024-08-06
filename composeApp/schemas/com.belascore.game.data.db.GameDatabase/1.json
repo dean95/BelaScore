@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "0ad96493e899469bb4b7c8e43a30cc4d",
+    "identityHash": "3c5c9158bfd88e207e6edc09b79b758c",
     "entities": [
       {
         "tableName": "GameEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `winningScore` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `winningScore` INTEGER NOT NULL, `isInProgress` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -17,6 +17,12 @@
           {
             "fieldPath": "winningScore",
             "columnName": "winningScore",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isInProgress",
+            "columnName": "isInProgress",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -138,7 +144,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0ad96493e899469bb4b7c8e43a30cc4d')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3c5c9158bfd88e207e6edc09b79b758c')"
     ]
   }
 }

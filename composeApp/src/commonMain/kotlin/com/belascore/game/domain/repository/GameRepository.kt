@@ -10,4 +10,6 @@ interface GameRepository {
     suspend fun insertGameTeamCrossRef(gameId: Long, teamId: Long)
 
     fun observeWinningTeams(gameId: Long): Flow<List<Team>>
+
+    suspend fun endGame(gameId: Long)
 }

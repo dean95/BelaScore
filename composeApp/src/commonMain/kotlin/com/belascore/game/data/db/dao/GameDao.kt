@@ -18,4 +18,7 @@ interface GameDao {
 
     @Query("SELECT winningScore FROM GameEntity WHERE id = :gameId")
     fun observeWinningScoreForGame(gameId: Long): Flow<Int>
+
+    @Query("UPDATE GameEntity SET isInProgress = 0 WHERE id = :gameId")
+    suspend fun endGame(gameId: Long)
 }
