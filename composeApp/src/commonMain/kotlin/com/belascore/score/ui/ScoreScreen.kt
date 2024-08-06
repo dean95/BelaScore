@@ -13,9 +13,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults.containerColor
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,6 +26,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,6 +54,8 @@ fun ScoreScreen(
     )
     val scope = rememberCoroutineScope()
 
+    val isGameInProgress = scoreUiState.winningTeams.isEmpty()
+
     Scaffold(
         topBar = {
             TopBar(navigationIcon = { BackIcon(onBackClick = onBackClick) })
@@ -58,8 +63,12 @@ fun ScoreScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    showBottomSheet = true
-                }
+                    if (isGameInProgress) {
+                        showBottomSheet = true
+                    }
+                },
+                containerColor = if (isGameInProgress) containerColor else Color.Gray,
+                contentColor = if (isGameInProgress) contentColorFor(containerColor) else Color.DarkGray
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
@@ -137,6 +146,10 @@ fun ScoreScreen(
                 teams = scoreUiState.teams,
                 modifier = Modifier.fillMaxHeight()
             )
+        }
+
+        if (scoreUiState.winningTeams.isNotEmpty()) {
+            // TODO Show dialog
         }
     }
 }
