@@ -13,6 +13,10 @@
     <string name="stiglja">Štiglja</string>
     <string name="got_it">U redu</string>
     <string name="winner">Pobjednik</string>
+    <string name="quit">Odustani</string>
+    <string name="quit_game_title">Odustati od igre?</string>
+    <string name="quit_game_message">Jeste li sigurni da želite odustati od trenutne igre? Napredak će biti izgubljen.</string>
+    <string name="keep_playing">Nastavi Igrati</string>
 
     <string name="cd_back">Natrag</string>
     <string name="cd_add_scores">Dodaj rezultate</string>

@@ -13,6 +13,10 @@
     <string name="stiglja">Štiglja</string>
     <string name="got_it">Got It</string>
     <string name="winner">Winner</string>
+    <string name="quit">Quit</string>
+    <string name="quit_game_title">Quit Game?</string>
+    <string name="quit_game_message">Are you sure you want to quit the current game? Progress will be lost.</string>
+    <string name="keep_playing">Keep Playing</string>
 
     <string name="cd_back">Back</string>
     <string name="cd_add_scores">Add Scores</string>

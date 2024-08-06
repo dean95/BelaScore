@@ -36,7 +36,9 @@ import belascore.composeapp.generated.resources.cd_add_scores
 import com.belascore.coreUi.common.BackIcon
 import com.belascore.coreUi.common.Screen
 import com.belascore.coreUi.common.TopBar
+import com.belascore.coreUi.navigation.OnBackPressed
 import com.belascore.score.ui.components.GameResultDialog
+import com.belascore.score.ui.components.QuitGameConfirmationDialog
 import com.belascore.score.ui.components.ScoreInputBottomSheet
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -57,9 +59,26 @@ fun ScoreScreen(
 
     val isGameInProgress = scoreUiState.winningTeams.isEmpty()
 
+    var showQuitConfirmation by rememberSaveable { mutableStateOf(false) }
+
+    OnBackPressed(isGameInProgress) {
+        showQuitConfirmation = true
+    }
+
     Scaffold(
         topBar = {
-            TopBar(navigationIcon = { BackIcon(onBackClick = onBackClick) })
+            TopBar(
+                navigationIcon = {
+                    BackIcon(
+                        onBackClick = {
+                            if (isGameInProgress) {
+                                showQuitConfirmation = true
+                            } else {
+                                onBackClick()
+                            }
+                        }
+                    )
+                })
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -157,6 +176,17 @@ fun ScoreScreen(
                     onConfirmation = { showDialog = false }
                 )
             }
+        }
+
+        if (showQuitConfirmation) {
+            QuitGameConfirmationDialog(
+                onConfirmQuit = {
+                    viewModel.quitGame()
+                    showQuitConfirmation = false
+                    onBackClick()
+                },
+                onDismiss = { showQuitConfirmation = false }
+            )
         }
     }
 }
