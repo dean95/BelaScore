@@ -1,12 +1,13 @@
 package com.belascore.game.data.repository
 
+import com.belascore.game.data.db.dao.GameAndTeamCompositeDao
 import com.belascore.game.data.db.dao.GameDao
 import com.belascore.game.data.db.dao.ScoreDao
 import com.belascore.game.data.db.dao.TeamDao
 import com.belascore.game.data.db.mapper.DbMapper
 import com.belascore.game.data.db.model.GameEntity
-import com.belascore.game.data.db.model.GameTeamCrossRef
 import com.belascore.game.data.db.model.ScoreEntity
+import com.belascore.game.data.db.model.TeamEntity
 import com.belascore.game.domain.model.Game
 import com.belascore.game.domain.model.Team
 import com.belascore.game.domain.repository.GameRepository
@@ -22,24 +23,18 @@ internal class GameRepositoryImpl(
     private val gameDao: GameDao,
     private val scoreDao: ScoreDao,
     private val teamDao: TeamDao,
+    private val gameAndTeamCompositeDao: GameAndTeamCompositeDao,
     private val dbMapper: DbMapper
 ) : GameRepository {
 
-    override suspend fun insertGame(winningScore: Int): Long =
-        gameDao.insert(
-            GameEntity(
-                winningScore = winningScore,
-                isInProgress = true
-            )
-        )
-
-    override suspend fun insertGameTeamCrossRef(gameId: Long, teamId: Long) =
-        gameDao
-            .insertGameTeamCrossRef(
-                GameTeamCrossRef(
-                    gameId = gameId,
-                    teamId = teamId
-                )
+    override suspend fun insertGameWithTeams(winningScore: Int, teamNames: List<String>): Long =
+        gameAndTeamCompositeDao
+            .insertGameWithTeams(
+                game = GameEntity(
+                    winningScore = winningScore,
+                    isInProgress = true
+                ),
+                teams = teamNames.map { TeamEntity(name = it) }
             )
 
     override fun observeWinningTeams(gameId: Long): Flow<List<Team>> =

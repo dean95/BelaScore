@@ -2,6 +2,7 @@ package com.belascore.game.di
 
 import androidx.room.RoomDatabase
 import com.belascore.game.data.db.GameDatabase
+import com.belascore.game.data.db.dao.GameAndTeamCompositeDao
 import com.belascore.game.data.db.dao.GameDao
 import com.belascore.game.data.db.dao.ScoreDao
 import com.belascore.game.data.db.dao.TeamDao
@@ -31,6 +32,11 @@ val gameModule = module {
     single<TeamDao> {
         val dbBuilder = get<RoomDatabase.Builder<GameDatabase>>()
         dbBuilder.build().teamDao()
+    }
+
+    single<GameAndTeamCompositeDao> {
+        val dbBuilder = get<RoomDatabase.Builder<GameDatabase>>()
+        dbBuilder.build().gameAndTeamCompositeDao()
     }
 
     singleOf(::DbMapperImpl).bind<DbMapper>()

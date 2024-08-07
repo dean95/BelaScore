@@ -6,9 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface GameRepository {
 
-    suspend fun insertGame(winningScore: Int): Long
-
-    suspend fun insertGameTeamCrossRef(gameId: Long, teamId: Long)
+    suspend fun insertGameWithTeams(winningScore: Int, teamNames: List<String>): Long
 
     fun observeWinningTeams(gameId: Long): Flow<List<Team>>
 
