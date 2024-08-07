@@ -23,7 +23,6 @@ class HomeViewModel(
         gameRepository
             .observeActiveGame()
             .collect { game ->
-                println(game)
                 _uiState.update { homeUiState ->
                     homeUiState.copy(
                         activeGameId = game?.id

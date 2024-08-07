@@ -51,7 +51,10 @@ fun Navigation() {
                 ScoreScreen(
                     viewModel = koinViewModel(parameters = { parametersOf(args.gameId) })
                 ) {
-                    navController.navigateUp()
+                    navController.popBackStack(
+                        route = Home,
+                        inclusive = false
+                    )
                 }
             }
         }
