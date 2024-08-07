@@ -14,24 +14,24 @@ interface GameAndTeamCompositeDao {
     suspend fun insertGame(game: GameEntity): Long
 
     @Insert
-    suspend fun insertGameTeamCrossRef(crossRef: GameTeamCrossRef)
+    suspend fun insertGameTeamCrossRefs(crossRef: List<GameTeamCrossRef>)
 
     @Insert
-    suspend fun insertTeam(team: TeamEntity): Long
+    suspend fun insertTeams(teams: List<TeamEntity>): List<Long>
 
     @Transaction
     suspend fun insertGameWithTeams(game: GameEntity, teams: List<TeamEntity>): Long {
         val gameId = insertGame(game)
 
-        teams.forEach { team ->
-            val teamId = insertTeam(team)
-            insertGameTeamCrossRef(
-                GameTeamCrossRef(
-                    gameId = gameId,
-                    teamId = teamId
-                )
+        val teamIds = insertTeams(teams)
+        val crossRefs = teamIds.map { teamId ->
+            GameTeamCrossRef(
+                gameId = gameId,
+                teamId = teamId
             )
         }
+
+        insertGameTeamCrossRefs(crossRefs)
 
         return gameId
     }
