@@ -14,7 +14,4 @@ interface ScoreDao {
 
     @Query("SELECT * FROM scoreEntity WHERE gameId = :gameId")
     fun observeScoresByGame(gameId: Long): Flow<List<ScoreEntity>>
-
-    @Query("DELETE FROM scoreEntity WHERE gameId = :gameId")
-    suspend fun deleteScoresForGame(gameId: Long)
 }

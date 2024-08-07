@@ -1,5 +1,6 @@
 package com.belascore.game.data.repository
 
+import com.belascore.game.data.db.dao.GameAndScoreCompositeDao
 import com.belascore.game.data.db.dao.GameAndTeamCompositeDao
 import com.belascore.game.data.db.dao.GameDao
 import com.belascore.game.data.db.dao.ScoreDao
@@ -11,19 +12,17 @@ import com.belascore.game.data.db.model.TeamEntity
 import com.belascore.game.domain.model.Game
 import com.belascore.game.domain.model.Team
 import com.belascore.game.domain.repository.GameRepository
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.supervisorScope
 
 internal class GameRepositoryImpl(
     private val gameDao: GameDao,
     private val scoreDao: ScoreDao,
     private val teamDao: TeamDao,
     private val gameAndTeamCompositeDao: GameAndTeamCompositeDao,
+    private val gameAndScoreCompositeDao: GameAndScoreCompositeDao,
     private val dbMapper: DbMapper
 ) : GameRepository {
 
@@ -52,17 +51,10 @@ internal class GameRepositoryImpl(
                 }
         }
 
-    override suspend fun endGame(gameId: Long) = gameDao.endGame(gameId)
+    override suspend fun endGame(gameId: Long) = gameDao.endGame(gameId = gameId)
 
-    override suspend fun deleteGame(gameId: Long) {
-        supervisorScope {
-            awaitAll(
-                async { gameDao.deleteGame(gameId) },
-                async { gameDao.deleteGameTeamCrossRefsForGame(gameId) },
-                async { scoreDao.deleteScoresForGame(gameId) }
-            )
-        }
-    }
+    override suspend fun deleteGame(gameId: Long) =
+        gameAndScoreCompositeDao.deleteGameWithScores(gameId = gameId)
 
     override fun observeActiveGame(): Flow<Game?> =
         gameDao
