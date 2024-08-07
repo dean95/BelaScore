@@ -27,4 +27,7 @@ interface GameDao {
 
     @Query("DELETE FROM GameTeamCrossRef WHERE gameId = :gameId")
     suspend fun deleteGameTeamCrossRefsForGame(gameId: Long)
+
+    @Query("SELECT * FROM GameEntity WHERE isInProgress = 1")
+    fun observeActiveGame(): Flow<GameEntity?>
 }

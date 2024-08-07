@@ -25,11 +25,15 @@ fun Navigation() {
         ) {
             composable<Home> {
                 HomeScreen(
+                    viewModel = koinViewModel(),
                     onNewGameClick = {
                         navController.navigate(NewGame)
                     },
                     onGameHistoryClick = {
                         /* no-op */
+                    },
+                    onGameResumed = {
+                        navController.navigate(Score(gameId = it))
                     }
                 )
             }

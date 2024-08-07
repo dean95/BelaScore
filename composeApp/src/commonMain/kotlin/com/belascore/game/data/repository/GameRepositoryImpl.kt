@@ -7,6 +7,7 @@ import com.belascore.game.data.db.mapper.DbMapper
 import com.belascore.game.data.db.model.GameEntity
 import com.belascore.game.data.db.model.GameTeamCrossRef
 import com.belascore.game.data.db.model.ScoreEntity
+import com.belascore.game.domain.model.Game
 import com.belascore.game.domain.model.Team
 import com.belascore.game.domain.repository.GameRepository
 import kotlinx.coroutines.async
@@ -14,6 +15,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.supervisorScope
 
 internal class GameRepositoryImpl(
@@ -66,4 +68,9 @@ internal class GameRepositoryImpl(
             )
         }
     }
+
+    override fun observeActiveGame(): Flow<Game?> =
+        gameDao
+            .observeActiveGame()
+            .map { it?.let(dbMapper::fromGameEntity) }
 }
