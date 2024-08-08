@@ -2,8 +2,7 @@ package com.belascore.game.data.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.belascore.game.data.db.dao.GameAndScoreCompositeDao
-import com.belascore.game.data.db.dao.GameAndTeamCompositeDao
+import com.belascore.game.data.db.dao.GameCompositeDao
 import com.belascore.game.data.db.dao.GameDao
 import com.belascore.game.data.db.dao.ScoreDao
 import com.belascore.game.data.db.dao.TeamDao
@@ -29,9 +28,7 @@ abstract class GameDatabase : RoomDatabase(), Db {
 
     abstract fun scoreDao(): ScoreDao
 
-    abstract fun gameAndTeamCompositeDao(): GameAndTeamCompositeDao
-
-    abstract fun gameAndScoreCompositeDao(): GameAndScoreCompositeDao
+    abstract fun gameCompositeDao(): GameCompositeDao
 
     override fun clearAllTables() {
         // no-op

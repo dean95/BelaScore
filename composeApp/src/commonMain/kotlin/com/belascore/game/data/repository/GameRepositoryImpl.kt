@@ -1,7 +1,6 @@
 package com.belascore.game.data.repository
 
-import com.belascore.game.data.db.dao.GameAndScoreCompositeDao
-import com.belascore.game.data.db.dao.GameAndTeamCompositeDao
+import com.belascore.game.data.db.dao.GameCompositeDao
 import com.belascore.game.data.db.dao.GameDao
 import com.belascore.game.data.db.dao.ScoreDao
 import com.belascore.game.data.db.dao.TeamDao
@@ -21,13 +20,12 @@ internal class GameRepositoryImpl(
     private val gameDao: GameDao,
     private val scoreDao: ScoreDao,
     private val teamDao: TeamDao,
-    private val gameAndTeamCompositeDao: GameAndTeamCompositeDao,
-    private val gameAndScoreCompositeDao: GameAndScoreCompositeDao,
+    private val gameCompositeDao: GameCompositeDao,
     private val dbMapper: DbMapper
 ) : GameRepository {
 
     override suspend fun insertGameWithTeams(winningScore: Int, teamNames: List<String>): Long =
-        gameAndTeamCompositeDao
+        gameCompositeDao
             .insertGameWithTeams(
                 game = GameEntity(
                     winningScore = winningScore,
@@ -54,10 +52,10 @@ internal class GameRepositoryImpl(
     override suspend fun endGame(gameId: Long) = gameDao.endGame(gameId = gameId)
 
     override suspend fun deleteGame(gameId: Long) =
-        gameAndScoreCompositeDao.deleteGameWithScores(gameId = gameId)
+        gameCompositeDao.deleteGameWithScores(gameId = gameId)
 
     override fun observeActiveGame(): Flow<Game?> =
-        gameDao
+        gameCompositeDao
             .observeActiveGame()
             .map { it?.let(dbMapper::fromGameEntity) }
 }
