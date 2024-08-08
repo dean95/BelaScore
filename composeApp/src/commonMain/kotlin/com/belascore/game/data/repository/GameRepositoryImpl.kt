@@ -37,7 +37,18 @@ internal class GameRepositoryImpl(
                 .groupBy(ScoreEntity::teamId)
                 .filter { (_, scoresForTeam) ->
                     scoresForTeam.sumOf(ScoreEntity::score) >= winningScore
-                }.map { (teamId, _) ->
+                }
+                .let { qualifiedTeams ->
+
+                    val maxScore = qualifiedTeams.maxOfOrNull { (_, scoresForTeam) ->
+                        scoresForTeam.sumOf(ScoreEntity::score)
+                    }
+
+                    qualifiedTeams.filterValues { scoresForTeam ->
+                        scoresForTeam.sumOf(ScoreEntity::score) == maxScore
+                    }
+                }
+                .map { (teamId, _) ->
                     val winningTeam = gameDao.observeTeamById(teamId).first()
                     dbMapper.fromTeamEntity(winningTeam)
                 }
