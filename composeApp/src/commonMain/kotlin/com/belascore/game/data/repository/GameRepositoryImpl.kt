@@ -1,9 +1,6 @@
 package com.belascore.game.data.repository
 
-import com.belascore.game.data.db.dao.GameCompositeDao
 import com.belascore.game.data.db.dao.GameDao
-import com.belascore.game.data.db.dao.ScoreDao
-import com.belascore.game.data.db.dao.TeamDao
 import com.belascore.game.data.db.mapper.DbMapper
 import com.belascore.game.data.db.model.GameEntity
 import com.belascore.game.data.db.model.ScoreEntity
@@ -18,14 +15,11 @@ import kotlinx.coroutines.flow.map
 
 internal class GameRepositoryImpl(
     private val gameDao: GameDao,
-    private val scoreDao: ScoreDao,
-    private val teamDao: TeamDao,
-    private val gameCompositeDao: GameCompositeDao,
     private val dbMapper: DbMapper
 ) : GameRepository {
 
     override suspend fun insertGameWithTeams(winningScore: Int, teamNames: List<String>): Long =
-        gameCompositeDao
+        gameDao
             .insertGameWithTeams(
                 game = GameEntity(
                     winningScore = winningScore,
@@ -37,14 +31,14 @@ internal class GameRepositoryImpl(
     override fun observeWinningTeams(gameId: Long): Flow<List<Team>> =
         combine(
             gameDao.observeWinningScoreForGame(gameId),
-            scoreDao.observeScoresByGame(gameId)
+            gameDao.observeScoresByGame(gameId)
         ) { winningScore, scoresForGame ->
             scoresForGame
                 .groupBy(ScoreEntity::teamId)
                 .filter { (_, scoresForTeam) ->
                     scoresForTeam.sumOf(ScoreEntity::score) >= winningScore
                 }.map { (teamId, _) ->
-                    val winningTeam = teamDao.observeTeamById(teamId).first()
+                    val winningTeam = gameDao.observeTeamById(teamId).first()
                     dbMapper.fromTeamEntity(winningTeam)
                 }
         }
@@ -52,10 +46,10 @@ internal class GameRepositoryImpl(
     override suspend fun endGame(gameId: Long) = gameDao.endGame(gameId = gameId)
 
     override suspend fun deleteGame(gameId: Long) =
-        gameCompositeDao.deleteGameWithScores(gameId = gameId)
+        gameDao.deleteGameWithScores(gameId = gameId)
 
     override fun observeActiveGame(): Flow<Game?> =
-        gameCompositeDao
+        gameDao
             .observeActiveGame()
             .map { it?.let(dbMapper::fromGameEntity) }
 }
