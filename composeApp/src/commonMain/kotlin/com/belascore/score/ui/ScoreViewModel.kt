@@ -85,14 +85,19 @@ class ScoreViewModel(
             teamRepository.observeTeamsForGame(gameId),
             scoreRepository.observeScoresByGame(gameId)
         ) { teams, scores ->
+            val teamTotalScores = scores
+                .groupBy(Score::teamId)
+                .mapValues { (_, scores) -> scores.sumOf(Score::score) }
+
             val teamItems = teams.map { team ->
                 TeamUiState(
                     id = team.id,
-                    name = team.name
+                    name = team.name,
+                    totalScore = teamTotalScores[team.id] ?: 0
                 )
             }
 
-            val groupedByRound = scores.groupBy { it.roundNumber }
+            val groupedByRound = scores.groupBy(Score::roundNumber)
 
             val roundItems = groupedByRound.map { (round, scores) ->
                 val teamScores = scores.associateBy(Score::teamId)
@@ -112,24 +117,32 @@ class ScoreViewModel(
     }
 
     private fun observeWinningTeams() = viewModelScope.launch {
-        gameRepository
-            .observeWinningTeams(gameId)
-            .distinctUntilChanged()
-            .collect { winningTeams ->
-                if (winningTeams.isNotEmpty()) {
-                    endGame()
-                }
-                _uiState.update { scoreUiState ->
-                    scoreUiState.copy(
-                        winningTeams = winningTeams.map {
-                            TeamUiState(
-                                id = it.id,
-                                name = it.name
-                            )
-                        }
-                    )
-                }
+        combine(
+            scoreRepository.observeScoresByGame(gameId),
+            gameRepository
+                .observeWinningTeams(gameId)
+                .distinctUntilChanged()
+        ) { scores, winningTeams ->
+            val teamTotalScores = scores
+                .groupBy(Score::teamId)
+                .mapValues { (_, scores) -> scores.sumOf(Score::score) }
+
+            if (winningTeams.isNotEmpty()) {
+                endGame()
             }
+
+            _uiState.update { scoreUiState ->
+                scoreUiState.copy(
+                    winningTeams = winningTeams.map {
+                        TeamUiState(
+                            id = it.id,
+                            name = it.name,
+                            totalScore = teamTotalScores[it.id] ?: 0
+                        )
+                    }
+                )
+            }
+        }.collect()
     }
 
     private fun endGame() = viewModelScope.launch {

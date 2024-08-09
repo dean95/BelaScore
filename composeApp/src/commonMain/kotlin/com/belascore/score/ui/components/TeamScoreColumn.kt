@@ -19,7 +19,10 @@ import com.belascore.score.ui.TeamUiState
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun RowScope.TeamScoreColumn(team: TeamUiState, rounds: List<RoundItemUiState>) {
+fun RowScope.TeamScoreColumn(
+    team: TeamUiState,
+    rounds: List<RoundItemUiState>,
+) {
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.weight(weight = 1f)
@@ -45,7 +48,7 @@ fun RowScope.TeamScoreColumn(team: TeamUiState, rounds: List<RoundItemUiState>) 
             ScoreItem(score = round.scores.getValue(team.id))
         }
 
-        if (rounds.isNotEmpty()) {
+        if (rounds.size > 1) {
             item {
                 HorizontalDivider(
                     modifier = Modifier
@@ -54,13 +57,9 @@ fun RowScope.TeamScoreColumn(team: TeamUiState, rounds: List<RoundItemUiState>) 
                 )
             }
 
-            val totalScore = calculateTotalScore(rounds, team.id)
             item {
-                ScoreItem(score = totalScore)
+                ScoreItem(score = team.totalScore)
             }
         }
     }
 }
-
-private fun calculateTotalScore(rounds: List<RoundItemUiState>, teamId: Long): Int =
-    rounds.sumOf { round -> round.scores.getValue(teamId) }

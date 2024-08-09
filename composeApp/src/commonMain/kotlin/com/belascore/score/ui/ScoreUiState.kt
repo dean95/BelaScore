@@ -17,7 +17,8 @@ data class RoundItemUiState(
 
 data class TeamUiState(
     val id: Long,
-    val name: String
+    val name: String,
+    val totalScore: Int
 )
 
 enum class DialogState {

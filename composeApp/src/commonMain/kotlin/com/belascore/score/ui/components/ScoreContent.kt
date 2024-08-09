@@ -14,7 +14,10 @@ fun ScoreContent(
 ) {
     Row(modifier = modifier) {
         scoreUiState.teams.forEachIndexed { index, team ->
-            TeamScoreColumn(team = team, rounds = scoreUiState.rounds)
+            TeamScoreColumn(
+                team = team,
+                rounds = scoreUiState.rounds
+            )
 
             if (index < scoreUiState.teams.lastIndex) {
                 VerticalDivider(modifier = Modifier.fillMaxHeight())
