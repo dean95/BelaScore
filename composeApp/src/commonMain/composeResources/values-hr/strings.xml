@@ -22,4 +22,5 @@
     <string name="cd_add_scores">Dodaj rezultate</string>
     <string name="cd_decrease">Smanjenje</string>
     <string name="cd_increase">Povećanje</string>
+    <string name="cd_close">Zatvori</string>
 </resources>

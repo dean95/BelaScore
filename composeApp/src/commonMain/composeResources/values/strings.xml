@@ -22,4 +22,5 @@
     <string name="cd_add_scores">Add Scores</string>
     <string name="cd_decrease">Decrease</string>
     <string name="cd_increase">Increase</string>
+    <string name="cd_close">Close</string>
 </resources>

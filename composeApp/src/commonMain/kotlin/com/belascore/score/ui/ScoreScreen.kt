@@ -26,7 +26,7 @@ import com.belascore.score.ui.components.ScoreScreenTopBar
 @Composable
 fun ScoreScreen(
     viewModel: ScoreViewModel,
-    onBackClick: () -> Unit
+    onCloseClick: () -> Unit
 ) = Screen {
     val scoreUiState by viewModel.uiState.collectAsStateWithLifecycle()
     var currentDialog: DialogState by rememberSaveable { mutableStateOf(DialogState.None) }
@@ -47,7 +47,7 @@ fun ScoreScreen(
         topBar = {
             ScoreScreenTopBar(
                 isGameInProgress = isGameInProgress,
-                onBackClick = onBackClick
+                onCloseClick = onCloseClick
             ) {
                 currentDialog = it
             }
@@ -82,6 +82,6 @@ fun ScoreScreen(
     )
 
     if (scoreUiState.quitGame) {
-        LaunchedEffect(Unit) { onBackClick() }
+        LaunchedEffect(Unit) { onCloseClick() }
     }
 }
