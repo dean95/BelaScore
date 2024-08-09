@@ -19,3 +19,10 @@ data class TeamUiState(
     val id: Long,
     val name: String
 )
+
+enum class DialogState {
+    None,
+    ScoreInput,
+    GameResult,
+    QuitConfirmation
+}

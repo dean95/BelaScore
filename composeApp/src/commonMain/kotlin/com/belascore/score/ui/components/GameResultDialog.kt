@@ -29,9 +29,7 @@ fun GameResultDialog(
         },
         confirmButton = {
             TextButton(
-                onClick = {
-                    onConfirmation()
-                }
+                onClick = onConfirmation
             ) {
                 Text(stringResource(Res.string.got_it))
             }
