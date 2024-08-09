@@ -1,6 +1,7 @@
 package com.belascore.score.ui.components
 
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
@@ -61,7 +62,9 @@ fun ScoreScreenDialogs(
                 },
                 teams = scoreUiState.teams,
                 playerCount = scoreUiState.playerCount,
-                modifier = Modifier.fillMaxHeight()
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .statusBarsPadding()
             )
         }
 
