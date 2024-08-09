@@ -28,8 +28,9 @@ import belascore.composeapp.generated.resources.cancel
 import belascore.composeapp.generated.resources.confirm
 import belascore.composeapp.generated.resources.team_score
 import com.belascore.game.domain.model.DeclarationType
-import com.belascore.game.domain.model.MAX_SCORE_WITHOUT_SPECIAL_POINTS
+import com.belascore.game.domain.model.TOTAL_SCORE_WITHOUT_SPECIAL_POINTS
 import com.belascore.game.domain.model.SpecialPoints
+import com.belascore.newGame.ui.PlayerCount
 import com.belascore.score.ui.TeamUiState
 import org.jetbrains.compose.resources.stringResource
 
@@ -38,6 +39,7 @@ import org.jetbrains.compose.resources.stringResource
 fun ScoreInputBottomSheet(
     sheetState: SheetState,
     teams: List<TeamUiState>,
+    playerCount: PlayerCount,
     onDismissRequest: () -> Unit,
     onConfirm: (
         Map<Long, Int>,
@@ -82,12 +84,12 @@ fun ScoreInputBottomSheet(
                             onValueChange = { newValue ->
                                 val newScore = newValue.toInt()
 
-                                if (teamScores.size == 2) {
+                                if (playerCount.count == 4) {
                                     val otherTeamId = teams.find {
                                         it.id != team.id
                                     }?.id ?: error("Team not found")
 
-                                    val remainingScore = MAX_SCORE_WITHOUT_SPECIAL_POINTS - newScore
+                                    val remainingScore = TOTAL_SCORE_WITHOUT_SPECIAL_POINTS - newScore
 
                                     teamScores = teamScores.toMutableMap().apply {
                                         put(team.id, newScore)

@@ -36,6 +36,9 @@ interface GameDao {
     @Query("DELETE FROM GameEntity WHERE id = :gameId")
     suspend fun deleteGame(gameId: Long)
 
+    @Query("SELECT * FROM GameEntity WHERE id = :gameId")
+    fun observeGameById(gameId: Long): Flow<GameEntity?>
+
     // --- GameTeamCrossRef ---
 
     @Insert

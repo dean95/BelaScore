@@ -165,6 +165,7 @@ fun ScoreScreen(
                     }
                 },
                 teams = scoreUiState.teams,
+                playerCount = scoreUiState.playerCount,
                 modifier = Modifier.fillMaxHeight()
             )
         }

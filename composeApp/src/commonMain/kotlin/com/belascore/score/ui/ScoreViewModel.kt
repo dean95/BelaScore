@@ -29,6 +29,7 @@ class ScoreViewModel(
     init {
         observeTeamsAndScores()
         observeWinningTeams()
+        observeGame()
     }
 
     fun updateScores(
@@ -65,6 +66,18 @@ class ScoreViewModel(
                 quitGame = true
             )
         }
+    }
+
+    private fun observeGame() = viewModelScope.launch {
+        gameRepository
+            .observeGameById(gameId)
+            .collect { game ->
+                _uiState.update { scoreUiState ->
+                    scoreUiState.copy(
+                        playerCount = game.playerCount
+                    )
+                }
+            }
     }
 
     private fun observeTeamsAndScores() = viewModelScope.launch {

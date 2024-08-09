@@ -6,7 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import com.belascore.game.domain.model.MAX_SCORE_WITHOUT_SPECIAL_POINTS
+import com.belascore.game.domain.model.TOTAL_SCORE_WITHOUT_SPECIAL_POINTS
 
 @Composable
 fun ScoreInput(
@@ -21,7 +21,7 @@ fun ScoreInput(
         onValueChange = { newValue ->
             if (newValue.all(Char::isDigit)) {
                 val intValue = newValue.toIntOrNull() ?: 0
-                if (intValue <= MAX_SCORE_WITHOUT_SPECIAL_POINTS) {
+                if (intValue <= TOTAL_SCORE_WITHOUT_SPECIAL_POINTS) {
                     onValueChange(intValue.toString())
                 }
             }

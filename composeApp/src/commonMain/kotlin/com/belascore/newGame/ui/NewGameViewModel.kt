@@ -33,11 +33,13 @@ class NewGameViewModel(
 
     fun createNewGame(
         winningScore: Int,
+        playerCount: PlayerCount,
         teamNames: List<String>,
         onStartGameClick: (Long) -> Unit
     ) = viewModelScope.launch {
         val gameId = gameRepository.insertGameWithTeams(
             winningScore = winningScore,
+            playerCount = playerCount,
             teamNames = teamNames
         )
         onStartGameClick(gameId)

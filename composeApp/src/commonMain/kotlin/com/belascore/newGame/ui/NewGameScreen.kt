@@ -78,6 +78,7 @@ fun NewGameScreen(
                 onClick = {
                     viewModel.createNewGame(
                         winningScore = newGameUiState.gameOptions.winningScore,
+                        playerCount = newGameUiState.gameOptions.playerCount,
                         teamNames = teams,
                         onStartGameClick = onStartGameClick
                     )

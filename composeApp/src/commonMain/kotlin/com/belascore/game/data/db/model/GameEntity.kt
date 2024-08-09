@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class GameEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val winningScore: Int,
+    val numberOfPlayers: Int,
     val isInProgress: Boolean
 )

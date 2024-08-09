@@ -6,12 +6,14 @@ import com.belascore.game.data.db.model.TeamEntity
 import com.belascore.game.domain.model.Game
 import com.belascore.game.domain.model.Score
 import com.belascore.game.domain.model.Team
+import com.belascore.newGame.ui.PlayerCount
 
 internal class DbMapperImpl : DbMapper {
     override fun toGameEntity(game: Game) =
         GameEntity(
             id = game.id,
             winningScore = game.winningScore,
+            numberOfPlayers = game.playerCount.count,
             isInProgress = game.isInProgress
         )
 
@@ -32,6 +34,7 @@ internal class DbMapperImpl : DbMapper {
     override fun fromGameEntity(entity: GameEntity) = Game(
         id = entity.id,
         winningScore = entity.winningScore,
+        playerCount = PlayerCount.fromCount(entity.numberOfPlayers),
         isInProgress = entity.isInProgress
     )
 
