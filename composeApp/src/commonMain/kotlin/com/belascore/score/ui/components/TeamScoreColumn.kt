@@ -1,13 +1,9 @@
 package com.belascore.score.ui.components
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,56 +15,40 @@ import androidx.compose.ui.unit.dp
 import com.belascore.score.ui.RoundItemUiState
 import com.belascore.score.ui.TeamUiState
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun RowScope.TeamScoreColumn(
     team: TeamUiState,
-    rounds: List<RoundItemUiState>,
+    rounds: List<RoundItemUiState>
 ) {
-    LazyColumn(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.weight(weight = 1f)
+    Column(
+        modifier = Modifier.weight(weight = 1f),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        stickyHeader {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(color = MaterialTheme.colorScheme.background),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = team.name,
-                    style = MaterialTheme.typography.headlineLarge,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
+        Text(
+            text = team.name,
+            style = MaterialTheme.typography.headlineLarge,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+
+        HorizontalDivider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp)
+        )
+
+        rounds.forEach { round ->
+            ScoreItem(score = round.scores.getValue(team.id))
         }
 
-        item {
+        if (rounds.size > 1) {
             HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 16.dp)
             )
-        }
 
-        items(rounds) { round ->
-            ScoreItem(score = round.scores.getValue(team.id))
-        }
-
-        if (rounds.size > 1) {
-            item {
-                HorizontalDivider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp)
-                )
-            }
-
-            item {
-                ScoreItem(score = team.totalScore)
-            }
+            ScoreItem(score = team.totalScore)
         }
     }
 }
