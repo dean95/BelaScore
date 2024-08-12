@@ -5,8 +5,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import com.belascore.game.domain.model.TOTAL_SCORE_WITHOUT_SPECIAL_POINTS
 
 @Composable
@@ -17,12 +19,18 @@ fun ScoreInput(
     imeAction: ImeAction = ImeAction.Default,
     modifier: Modifier = Modifier
 ) {
+    val valueStr = value.toString()
+    val textFieldValue = TextFieldValue(
+        text = valueStr,
+        selection = TextRange(valueStr.length)
+    )
     OutlinedTextField(
         modifier = modifier,
-        value = value.toString(),
+        value = textFieldValue,
         onValueChange = { newValue ->
-            if (newValue.all(Char::isDigit)) {
-                val intValue = newValue.toIntOrNull() ?: 0
+            val newValueStr = newValue.text
+            if (newValueStr.all(Char::isDigit)) {
+                val intValue = newValueStr.toIntOrNull() ?: 0
                 if (intValue <= TOTAL_SCORE_WITHOUT_SPECIAL_POINTS) {
                     onValueChange(intValue.toString())
                 }
