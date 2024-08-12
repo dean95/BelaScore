@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "ee16fa12c10e4b7a29bf89010314d3b7",
+    "identityHash": "7977acdb5a34c973b3023cbaed601506",
     "entities": [
       {
         "tableName": "GameEntity",
@@ -100,7 +100,18 @@
             "teamId",
             "roundNumber"
           ]
-        }
+        },
+        "indices": [
+          {
+            "name": "index_ScoreEntity_gameId",
+            "unique": false,
+            "columnNames": [
+              "gameId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ScoreEntity_gameId` ON `${TABLE_NAME}` (`gameId`)"
+          }
+        ]
       },
       {
         "tableName": "GameTeamCrossRef",
@@ -150,7 +161,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ee16fa12c10e4b7a29bf89010314d3b7')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7977acdb5a34c973b3023cbaed601506')"
     ]
   }
 }
