@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import belascore.composeapp.generated.resources.Res
 import belascore.composeapp.generated.resources.cancel
@@ -71,7 +72,7 @@ fun ScoreInputBottomSheet(
                     .padding(vertical = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                teams.forEach { team ->
+                teams.forEachIndexed { index, team ->
                     Column(
                         modifier = Modifier
                             .weight(1f)
@@ -81,6 +82,7 @@ fun ScoreInputBottomSheet(
                         ScoreInput(
                             value = teamScores.getValue(team.id),
                             label = stringResource(Res.string.team_score, team.name),
+                            imeAction = if (index == teams.lastIndex) ImeAction.Done else ImeAction.Next,
                             onValueChange = { newValue ->
                                 val newScore = newValue.toInt()
 
@@ -89,7 +91,8 @@ fun ScoreInputBottomSheet(
                                         it.id != team.id
                                     }?.id ?: error("Team not found")
 
-                                    val remainingScore = TOTAL_SCORE_WITHOUT_SPECIAL_POINTS - newScore
+                                    val remainingScore =
+                                        TOTAL_SCORE_WITHOUT_SPECIAL_POINTS - newScore
 
                                     teamScores = teamScores.toMutableMap().apply {
                                         put(team.id, newScore)
