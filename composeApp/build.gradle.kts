@@ -66,10 +66,6 @@ kotlin {
             implementation(libs.kotlinx.coroutines.swing)
         }
     }
-
-    sourceSets.commonMain {
-        kotlin.srcDir("build/generated/ksp/metadata")
-    }
 }
 
 android {
