@@ -60,6 +60,7 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.kotlinx.serialization.json)
         }
+
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
@@ -120,16 +121,16 @@ compose.desktop {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
-    if (name != "kspCommonMainKotlinMetadata") {
-        dependsOn("kspCommonMainKotlinMetadata")
-    }
-}
-
 room {
     schemaDirectory("$projectDir/schemas")
 }
 
+// TODO Make it work for iOS
 dependencies {
     add("kspCommonMainMetadata", libs.androidx.room.compiler)
+    add("kspAndroid", libs.androidx.room.compiler)
+    add("kspDesktop", libs.androidx.room.compiler)
+    // add("kspIosX64", libs.androidx.room.compiler)
+    // add("kspIosArm64", libs.androidx.room.compiler)
+    // add("kspIosSimulatorArm64", libs.androidx.room.compiler)
 }
