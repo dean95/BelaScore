@@ -2,6 +2,7 @@ package com.belascore.score.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,6 +36,16 @@ import com.belascore.newGame.ui.PlayerCount
 import com.belascore.score.ui.TeamUiState
 import org.jetbrains.compose.resources.stringResource
 
+// Data class to hold scores for a team
+data class TeamScore(
+    val score: Int = 0,
+    val declarations: MutableMap<DeclarationType, Int> = mutableMapOf(),
+    val specialPoints: MutableSet<SpecialPoints> = mutableSetOf()
+)
+
+// Data class to hold scores for all teams
+data class TeamScores(val scores: Map<Long, TeamScore>)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScoreInputBottomSheet(
@@ -42,169 +53,162 @@ fun ScoreInputBottomSheet(
     teams: List<TeamUiState>,
     playerCount: PlayerCount,
     onDismissRequest: () -> Unit,
-    onConfirm: (
-        Map<Long, Int>,
-        Map<Long, Map<DeclarationType, Int>>,
-        Map<Long, Set<SpecialPoints>>
-    ) -> Unit,
+    onConfirm: (TeamScores) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var teamScores by remember { mutableStateOf(teams.associate { it.id to 0 }) }
-    var teamDeclarations by remember { mutableStateOf(teams.associate { it.id to mutableMapOf<DeclarationType, Int>() }) }
-    var teamSpecialPoints by remember { mutableStateOf(teams.associate { it.id to mutableSetOf<SpecialPoints>() }) }
+    var teamScores by remember { mutableStateOf(teams.associate { it.id to TeamScore() }) }
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
         modifier = modifier
     ) {
-
-        Column(
-            modifier = Modifier
-                .verticalScroll(state = rememberScrollState())
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                teams.forEachIndexed { index, team ->
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        ScoreInput(
-                            value = teamScores.getValue(team.id),
-                            label = stringResource(Res.string.team_score, team.name),
-                            imeAction = if (index == teams.lastIndex) ImeAction.Done else ImeAction.Next,
-                            onValueChange = { newValue ->
-                                val newScore = newValue.toInt()
-
-                                if (playerCount.count == 4) {
-                                    val otherTeamId = teams.find {
-                                        it.id != team.id
-                                    }?.id ?: error("Team not found")
-
-                                    val remainingScore =
-                                        TOTAL_SCORE_WITHOUT_SPECIAL_POINTS - newScore
-
-                                    teamScores = teamScores.toMutableMap().apply {
-                                        put(team.id, newScore)
-                                        put(otherTeamId, remainingScore)
-                                    }
-                                } else {
-                                    teamScores = teamScores.toMutableMap().apply {
-                                        put(team.id, newScore)
-                                    }
-                                }
-                            }
-                        )
-
-                        DeclarationStepper(
-                            declarationType = DeclarationType.TWENTY,
-                            onCountChange = { count ->
-                                teamDeclarations = teamDeclarations.toMutableMap().apply {
-                                    getValue(team.id)[DeclarationType.TWENTY] = count
-                                }
-                            }
-                        )
-
-                        DeclarationStepper(
-                            declarationType = DeclarationType.FIFTY,
-                            onCountChange = { count ->
-                                teamDeclarations = teamDeclarations.toMutableMap().apply {
-                                    getValue(team.id)[DeclarationType.FIFTY] = count
-                                }
-                            }
-                        )
-
-                        DeclarationStepper(
-                            declarationType = DeclarationType.HUNDRED,
-                            onCountChange = { count ->
-                                teamDeclarations = teamDeclarations.toMutableMap().apply {
-                                    getValue(team.id)[DeclarationType.HUNDRED] = count
-                                }
-                            }
-                        )
-
-                        DeclarationStepper(
-                            declarationType = DeclarationType.ONE_FIFTY,
-                            onCountChange = { count ->
-                                teamDeclarations = teamDeclarations.toMutableMap().apply {
-                                    getValue(team.id)[DeclarationType.ONE_FIFTY] = count
-                                }
-                            }
-                        )
-
-                        DeclarationStepper(
-                            declarationType = DeclarationType.TWO_HUNDRED,
-                            onCountChange = { count ->
-                                teamDeclarations = teamDeclarations.toMutableMap().apply {
-                                    getValue(team.id)[DeclarationType.TWO_HUNDRED] = count
-                                }
-                            }
-                        )
-
-                        SpecialPointsSwitch(
-                            specialPoints = SpecialPoints.BELA,
-                            onCheckedChange = { checked ->
-                                teamSpecialPoints = teamSpecialPoints.toMutableMap().apply {
-                                    if (checked) {
-                                        getValue(team.id).add(SpecialPoints.BELA)
-                                    } else {
-                                        getValue(team.id).remove(SpecialPoints.BELA)
-                                    }
-                                }
-                            }
-                        )
-
-                        SpecialPointsSwitch(
-                            specialPoints = SpecialPoints.STIGLJA,
-                            onCheckedChange = { checked ->
-                                teamSpecialPoints = teamSpecialPoints.toMutableMap().apply {
-                                    if (checked) {
-                                        getValue(team.id).add(SpecialPoints.STIGLJA)
-                                    } else {
-                                        getValue(team.id).remove(SpecialPoints.STIGLJA)
-                                    }
-                                }
-                            }
+        BottomSheetContent(
+            teams = teams,
+            teamScores = teamScores,
+            onTeamScoreChange = { teamId, newScore ->
+                teamScores = teamScores.toMutableMap().apply {
+                    this[teamId] = newScore
+                    if (playerCount.count == 4) {
+                        val otherTeamId =
+                            teams.find { it.id != teamId }?.id ?: error("Team not found")
+                        this[otherTeamId] = this.getValue(otherTeamId).copy(
+                            score = TOTAL_SCORE_WITHOUT_SPECIAL_POINTS - newScore.score
                         )
                     }
                 }
+            },
+            onConfirm = { onConfirm(TeamScores(teamScores)) },
+            onCancel = onDismissRequest
+        )
+    }
+}
+
+@Composable
+private fun BottomSheetContent(
+    teams: List<TeamUiState>,
+    teamScores: Map<Long, TeamScore>,
+    onTeamScoreChange: (Long, TeamScore) -> Unit,
+    onConfirm: () -> Unit,
+    onCancel: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .verticalScroll(state = rememberScrollState())
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        TeamScoreInputs(
+            teams = teams,
+            teamScores = teamScores,
+            onTeamScoreChange = onTeamScoreChange
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        ConfirmationButtons(
+            onConfirm = onConfirm,
+            onCancel = onCancel
+        )
+    }
+}
+
+@Composable
+private fun TeamScoreInputs(
+    teams: List<TeamUiState>,
+    teamScores: Map<Long, TeamScore>,
+    onTeamScoreChange: (Long, TeamScore) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        teams.forEachIndexed { index, team ->
+            TeamScoreInput(
+                team = team,
+                teamScore = teamScores.getValue(team.id),
+                onTeamScoreChange = { newScore -> onTeamScoreChange(team.id, newScore) },
+                imeAction = if (index == teams.lastIndex) ImeAction.Done else ImeAction.Next
+            )
+        }
+    }
+}
+
+@Composable
+private fun RowScope.TeamScoreInput(
+    team: TeamUiState,
+    teamScore: TeamScore,
+    onTeamScoreChange: (TeamScore) -> Unit,
+    imeAction: ImeAction
+) {
+    Column(
+        modifier = Modifier
+            .weight(1f)
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Score Input
+        ScoreInput(
+            value = teamScore.score,
+            label = stringResource(Res.string.team_score, team.name),
+            imeAction = imeAction,
+            onValueChange = { newValue ->
+                val newScoreValue = newValue.toIntOrNull() ?: 0
+                onTeamScoreChange(teamScore.copy(score = newScoreValue))
             }
+        )
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Row {
-                FilledTonalButton(
-                    onClick = {
-                        onDismissRequest()
-                    }
-                ) {
-                    Text(text = stringResource(Res.string.cancel))
-                }
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                Button(
-                    onClick = {
-                        onConfirm(
-                            teamScores,
-                            teamDeclarations,
-                            teamSpecialPoints
+        // Declaration Steppers
+        DeclarationType.entries.forEach { declarationType ->
+            DeclarationStepper(
+                declarationType = declarationType,
+                onCountChange = { count ->
+                    onTeamScoreChange(
+                        teamScore.copy(
+                            declarations = teamScore.declarations.toMutableMap().apply {
+                                this[declarationType] = count
+                            }
                         )
-                    }
-                ) {
-                    Text(text = stringResource(Res.string.confirm))
+                    )
                 }
-            }
+            )
+        }
+
+        // Special Points Switches
+        SpecialPoints.entries.forEach { specialPoints ->
+            SpecialPointsSwitch(
+                specialPoints = specialPoints,
+                onCheckedChange = { checked ->
+                    onTeamScoreChange(
+                        teamScore.copy(
+                            specialPoints = teamScore.specialPoints.toMutableSet().apply {
+                                if (checked) add(specialPoints) else remove(specialPoints)
+                            }
+                        )
+                    )
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun ConfirmationButtons(
+    onConfirm: () -> Unit,
+    onCancel: () -> Unit
+) {
+    Row {
+        FilledTonalButton(onClick = onCancel) {
+            Text(text = stringResource(Res.string.cancel))
+        }
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        Button(onClick = onConfirm) {
+            Text(text = stringResource(Res.string.confirm))
         }
     }
 }

@@ -11,8 +11,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.belascore.game.domain.model.DeclarationType
-import com.belascore.game.domain.model.SpecialPoints
 import com.belascore.score.ui.DialogState
 import com.belascore.score.ui.ScoreUiState
 import kotlinx.coroutines.launch
@@ -24,12 +22,7 @@ fun ScoreScreenDialogs(
     sheetState: SheetState,
     scoreUiState: ScoreUiState,
     onDismissDialog: () -> Unit,
-    onUpdateScores: (
-        Map<Long, Int>,
-        Map<Long, Map<DeclarationType, Int>>,
-        Map<Long, Set<SpecialPoints>>,
-        Int
-    ) -> Unit,
+    onUpdateScores: (TeamScores, Int) -> Unit,
     onQuitGame: () -> Unit
 ) {
 
@@ -46,14 +39,12 @@ fun ScoreScreenDialogs(
                             }
                         }
                 },
-                onConfirm = { teamScores, teamDeclarations, teamSpecialPoints ->
+                onConfirm = { teamScores ->
                     scope.launch { sheetState.hide() }
                         .invokeOnCompletion {
                             if (!sheetState.isVisible) {
                                 onUpdateScores(
                                     teamScores,
-                                    teamDeclarations,
-                                    teamSpecialPoints,
                                     scoreUiState.rounds.size + 1
                                 )
                                 onDismissDialog()

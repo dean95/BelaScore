@@ -2,12 +2,12 @@ package com.belascore.score.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.belascore.game.domain.model.DeclarationType
 import com.belascore.game.domain.model.Score
 import com.belascore.game.domain.model.SpecialPoints
 import com.belascore.game.domain.repository.GameRepository
 import com.belascore.game.domain.repository.ScoreRepository
 import com.belascore.game.domain.repository.TeamRepository
+import com.belascore.score.ui.components.TeamScores
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
@@ -33,26 +33,21 @@ class ScoreViewModel(
     }
 
     fun updateScores(
-        teamScores: Map<Long, Int>,
-        teamDeclarations: Map<Long, Map<DeclarationType, Int>>,
-        teamSpecialPoints: Map<Long, Set<SpecialPoints>>,
+        teamScores: TeamScores,
         roundNumber: Int
     ) = viewModelScope.launch {
-        val declarationsScoresByTeam = teamDeclarations.mapValues { (_, declarations) ->
-            declarations.map { (declaration, count) -> declaration.points * count }.sum()
-        }
-
-        val specialPointsScoresByTeam =
-            teamSpecialPoints.mapValues { (_, specialPoints) -> specialPoints.sumOf(SpecialPoints::points) }
-
         scoreRepository.insertScores(
-            teamScores.map { (teamId, score) ->
+            teamScores.scores.map { (teamId, score) ->
                 Score(
                     gameId = gameId,
                     teamId = teamId,
-                    score = score +
-                            declarationsScoresByTeam.getValue(teamId) +
-                            specialPointsScoresByTeam.getValue(teamId),
+                    score = score.score +
+                            score
+                                .declarations
+                                .map { (declaration, count) -> declaration.points * count }
+                                .sum()
+                            +
+                            score.specialPoints.sumOf(SpecialPoints::points),
                     roundNumber = roundNumber
                 )
             }
