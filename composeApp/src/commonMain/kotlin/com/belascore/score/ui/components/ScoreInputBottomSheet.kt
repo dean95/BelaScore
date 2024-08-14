@@ -69,7 +69,7 @@ fun ScoreInputBottomSheet(
             onTeamScoreChange = { teamId, newScore ->
                 teamScores = teamScores.toMutableMap().apply {
                     this[teamId] = newScore
-                    if (playerCount.count == 4) {
+                    if (playerCount == PlayerCount.FOUR) {
                         val otherTeamId =
                             teams.find { it.id != teamId }?.id ?: error("Team not found")
                         this[otherTeamId] = this.getValue(otherTeamId).copy(
