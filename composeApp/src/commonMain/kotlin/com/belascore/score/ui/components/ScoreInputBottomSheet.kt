@@ -31,8 +31,8 @@ import belascore.composeapp.generated.resources.cancel
 import belascore.composeapp.generated.resources.confirm
 import belascore.composeapp.generated.resources.team_score
 import com.belascore.game.domain.model.DeclarationType
-import com.belascore.game.domain.model.TOTAL_SCORE_WITHOUT_SPECIAL_POINTS
 import com.belascore.game.domain.model.SpecialPoints
+import com.belascore.game.domain.model.TOTAL_SCORE_WITHOUT_SPECIAL_POINTS
 import com.belascore.newGame.ui.PlayerCount
 import com.belascore.score.ui.TeamUiState
 import org.jetbrains.compose.resources.stringResource
@@ -197,36 +197,65 @@ private fun TeamScoreInputs(
     roundScores: RoundScores,
     onTeamScoreChange: (Long, RoundScore) -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        teams.forEachIndexed { index, team ->
-            val teamScore = roundScores.scores.getValue(team.id)
-            ScoreInput(
-                value = teamScore.score,
-                label = stringResource(Res.string.team_score, team.name),
-                imeAction = if (index == teams.lastIndex) ImeAction.Done else ImeAction.Next,
-                onValueChange = { newValue ->
-                    val newScoreValue = newValue.toIntOrNull() ?: 0
-                    onTeamScoreChange(team.id, teamScore.copy(score = newScoreValue))
-                },
-                onFocusChanged = { focusState ->
-                    if (focusState.isFocused) {
-                        onFocused(team.id)
-                    }
-                },
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(16.dp),
-                bonusPoints = teamScore.declarations
-                    .map { (declaration, count) -> declaration.points * count }
-                    .sum() +
-                        teamScore.specialPoints.sumOf(SpecialPoints::points)
+    if (teams.size <= 2) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RenderTeamScoreInputs(
+                teams = teams,
+                roundScores = roundScores,
+                onTeamScoreChange = onTeamScoreChange,
+                onFocused = onFocused,
+                modifier = Modifier.weight(1f)
             )
         }
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp)
+        ) {
+            RenderTeamScoreInputs(
+                teams = teams,
+                roundScores = roundScores,
+                onTeamScoreChange = onTeamScoreChange,
+                onFocused = onFocused
+            )
+        }
+    }
+}
+
+@Composable
+private fun RenderTeamScoreInputs(
+    teams: List<TeamUiState>,
+    roundScores: RoundScores,
+    onTeamScoreChange: (Long, RoundScore) -> Unit,
+    onFocused: (Long) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    teams.forEachIndexed { index, team ->
+        val teamScore = roundScores.scores.getValue(team.id)
+        ScoreInput(
+            value = teamScore.score,
+            label = stringResource(Res.string.team_score, team.name),
+            imeAction = if (index == teams.lastIndex) ImeAction.Done else ImeAction.Next,
+            onValueChange = { newValue ->
+                val newScoreValue = newValue.toIntOrNull() ?: 0
+                onTeamScoreChange(team.id, teamScore.copy(score = newScoreValue))
+            },
+            onFocusChanged = { focusState ->
+                if (focusState.isFocused) {
+                    onFocused(team.id)
+                }
+            },
+            modifier = modifier.padding(16.dp),
+            bonusPoints = teamScore.declarations
+                .map { (declaration, count) -> declaration.points * count }
+                .sum() + teamScore.specialPoints.sumOf(SpecialPoints::points)
+        )
     }
 }
 
