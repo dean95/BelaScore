@@ -19,7 +19,7 @@ fun SelectableButton(
     Button(
         onClick = { onClick(text) },
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary,
+            containerColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.secondary,
         ),
         modifier = modifier.padding(horizontal = 4.dp),
     ) {
