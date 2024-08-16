@@ -1,7 +1,10 @@
 package com.belascore.score.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -136,6 +139,7 @@ private fun BottomSheetContent(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun FocusedTeamOptions(
     focusedTeamId: Long?,
@@ -143,49 +147,61 @@ private fun FocusedTeamOptions(
     onTeamScoreChange: (Long, RoundScore) -> Unit
 ) {
     // Declaration Steppers
-    DeclarationType.entries.forEach { declarationType ->
-        DeclarationStepper(
-            initialCount = focusedTeamId?.let { teamId ->
-                roundScores.scores.getValue(teamId).declarations[declarationType]
-            } ?: 0,
-            declarationType = declarationType,
-            onCountChange = { count ->
-                focusedTeamId?.let { teamId ->
-                    val currentScore = roundScores.scores.getValue(teamId)
-                    onTeamScoreChange(
-                        teamId,
-                        currentScore.copy(
-                            declarations = currentScore.declarations.toMutableMap().apply {
-                                this[declarationType] = count
-                            }
+    FlowRow(
+        horizontalArrangement = Arrangement.Center,
+        maxItemsInEachRow = 3,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        DeclarationType.entries.forEach { declarationType ->
+            DeclarationStepper(
+                initialCount = focusedTeamId?.let { teamId ->
+                    roundScores.scores.getValue(teamId).declarations[declarationType]
+                } ?: 0,
+                declarationType = declarationType,
+                onCountChange = { count ->
+                    focusedTeamId?.let { teamId ->
+                        val currentScore = roundScores.scores.getValue(teamId)
+                        onTeamScoreChange(
+                            teamId,
+                            currentScore.copy(
+                                declarations = currentScore.declarations.toMutableMap().apply {
+                                    this[declarationType] = count
+                                }
+                            )
                         )
-                    )
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 
     // Special Points Switches
-    SpecialPoints.entries.forEach { specialPoints ->
-        SpecialPointsSwitch(
-            initialChecked = focusedTeamId?.let { teamId ->
-                roundScores.scores.getValue(teamId).specialPoints.contains(specialPoints)
-            } ?: false,
-            specialPoints = specialPoints,
-            onCheckedChange = { checked ->
-                focusedTeamId?.let { teamId ->
-                    val currentScore = roundScores.scores.getValue(teamId)
-                    onTeamScoreChange(
-                        teamId,
-                        currentScore.copy(
-                            specialPoints = currentScore.specialPoints.toMutableSet().apply {
-                                if (checked) add(specialPoints) else remove(specialPoints)
-                            }
+    FlowRow(
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        SpecialPoints.entries.forEach { specialPoints ->
+            SpecialPointsSwitch(
+                initialChecked = focusedTeamId?.let { teamId ->
+                    roundScores.scores.getValue(teamId).specialPoints.contains(specialPoints)
+                } ?: false,
+                specialPoints = specialPoints,
+                onCheckedChange = { checked ->
+                    focusedTeamId?.let { teamId ->
+                        val currentScore = roundScores.scores.getValue(teamId)
+                        onTeamScoreChange(
+                            teamId,
+                            currentScore.copy(
+                                specialPoints = currentScore.specialPoints.toMutableSet().apply {
+                                    if (checked) add(specialPoints) else remove(specialPoints)
+                                }
+                            )
                         )
-                    )
-                }
-            }
-        )
+                    }
+                },
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+        }
     }
 }
 
