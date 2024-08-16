@@ -37,14 +37,14 @@ import com.belascore.newGame.ui.PlayerCount
 import com.belascore.score.ui.TeamUiState
 import org.jetbrains.compose.resources.stringResource
 
-// Data class to hold scores for a team
+// Data class to hold scores for a round
 data class RoundScore(
     val score: Int = 0,
     val declarations: MutableMap<DeclarationType, Int> = mutableMapOf(),
     val specialPoints: MutableSet<SpecialPoints> = mutableSetOf()
 )
 
-// Data class to hold scores for all teams
+// Data class to hold scores for all teams in a round
 data class RoundScores(val scores: Map<Long, RoundScore>)
 
 @OptIn(ExperimentalMaterial3Api::class)
