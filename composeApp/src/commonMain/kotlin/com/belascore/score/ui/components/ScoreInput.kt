@@ -1,6 +1,7 @@
 package com.belascore.score.ui.components
 
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Badge
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,6 +17,7 @@ import com.belascore.game.domain.model.TOTAL_SCORE_WITHOUT_SPECIAL_POINTS
 @Composable
 fun ScoreInput(
     value: Int,
+    bonusPoints: Int,
     label: String,
     onValueChange: (String) -> Unit,
     onFocusChanged: (FocusState) -> Unit,
@@ -27,6 +29,7 @@ fun ScoreInput(
         text = valueStr,
         selection = TextRange(valueStr.length)
     )
+
     OutlinedTextField(
         modifier = modifier.onFocusChanged(onFocusChanged),
         value = textFieldValue,
@@ -44,6 +47,13 @@ fun ScoreInput(
             keyboardType = KeyboardType.Number,
             imeAction = imeAction
         ),
-        singleLine = true
+        singleLine = true,
+        trailingIcon = {
+            if (bonusPoints > 0) {
+                Badge {
+                    Text("+$bonusPoints")
+                }
+            }
+        }
     )
 }

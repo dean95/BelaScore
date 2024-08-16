@@ -16,7 +16,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import belascore.composeapp.generated.resources.Res
@@ -53,10 +52,7 @@ fun DeclarationStepper(
         BadgedBox(
             badge = {
                 if (count > 0) {
-                    Badge(
-                        containerColor = Color.Red,
-                        contentColor = Color.White
-                    ) {
+                    Badge {
                         Text(text = count.toString())
                     }
                 }

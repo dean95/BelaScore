@@ -220,7 +220,11 @@ private fun TeamScoreInputs(
                 },
                 modifier = Modifier
                     .weight(1f)
-                    .padding(16.dp)
+                    .padding(16.dp),
+                bonusPoints = teamScore.declarations
+                    .map { (declaration, count) -> declaration.points * count }
+                    .sum() +
+                        teamScore.specialPoints.sumOf(SpecialPoints::points)
             )
         }
     }
