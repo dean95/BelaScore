@@ -2,7 +2,6 @@ package com.belascore.score.ui.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,14 +37,14 @@ import com.belascore.score.ui.TeamUiState
 import org.jetbrains.compose.resources.stringResource
 
 // Data class to hold scores for a team
-data class TeamScore(
+data class RoundScore(
     val score: Int = 0,
     val declarations: MutableMap<DeclarationType, Int> = mutableMapOf(),
     val specialPoints: MutableSet<SpecialPoints> = mutableSetOf()
 )
 
 // Data class to hold scores for all teams
-data class TeamScores(val scores: Map<Long, TeamScore>)
+data class RoundScores(val scores: Map<Long, RoundScore>)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,10 +53,14 @@ fun ScoreInputBottomSheet(
     teams: List<TeamUiState>,
     playerCount: PlayerCount,
     onDismissRequest: () -> Unit,
-    onConfirm: (TeamScores) -> Unit,
+    onConfirm: (RoundScores) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var teamScores by remember { mutableStateOf(teams.associate { it.id to TeamScore() }) }
+    var roundScores by remember {
+        mutableStateOf(
+            RoundScores(scores = teams.associate { it.id to RoundScore() })
+        )
+    }
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -65,20 +69,23 @@ fun ScoreInputBottomSheet(
     ) {
         BottomSheetContent(
             teams = teams,
-            teamScores = teamScores,
+            roundScores = roundScores,
             onTeamScoreChange = { teamId, newScore ->
-                teamScores = teamScores.toMutableMap().apply {
-                    this[teamId] = newScore
-                    if (playerCount == PlayerCount.FOUR) {
-                        val otherTeamId =
-                            teams.find { it.id != teamId }?.id ?: error("Team not found")
-                        this[otherTeamId] = this.getValue(otherTeamId).copy(
-                            score = TOTAL_SCORE_WITHOUT_SPECIAL_POINTS - newScore.score
-                        )
+                roundScores = roundScores.copy(
+                    scores = roundScores.scores.toMutableMap().apply {
+                        this[teamId] = newScore
+                        if (playerCount == PlayerCount.FOUR) {
+                            updateScoresForFourPlayers(
+                                teamScores = this,
+                                teamId = teamId,
+                                newScore = newScore,
+                                teams = teams
+                            )
+                        }
                     }
-                }
+                )
             },
-            onConfirm = { onConfirm(TeamScores(teamScores)) },
+            onConfirm = { onConfirm(roundScores) },
             onCancel = onDismissRequest
         )
     }
@@ -87,11 +94,13 @@ fun ScoreInputBottomSheet(
 @Composable
 private fun BottomSheetContent(
     teams: List<TeamUiState>,
-    teamScores: Map<Long, TeamScore>,
-    onTeamScoreChange: (Long, TeamScore) -> Unit,
+    roundScores: RoundScores,
+    onTeamScoreChange: (Long, RoundScore) -> Unit,
     onConfirm: () -> Unit,
     onCancel: () -> Unit
 ) {
+    var focusedTeamId by rememberSaveable { mutableStateOf<Long?>(null) }
+
     Column(
         modifier = Modifier
             .verticalScroll(state = rememberScrollState())
@@ -101,9 +110,56 @@ private fun BottomSheetContent(
     ) {
         TeamScoreInputs(
             teams = teams,
-            teamScores = teamScores,
-            onTeamScoreChange = onTeamScoreChange
+            roundScores = roundScores,
+            onTeamScoreChange = onTeamScoreChange,
+            onFocused = { focusedTeamId = it }
         )
+
+        // Declaration Steppers
+        DeclarationType.entries.forEach { declarationType ->
+            DeclarationStepper(
+                initialCount = focusedTeamId?.let { teamId ->
+                    roundScores.scores.getValue(teamId).declarations[declarationType]
+                } ?: 0,
+                declarationType = declarationType,
+                onCountChange = { count ->
+                    focusedTeamId?.let { teamId ->
+                        val currentScore = roundScores.scores.getValue(teamId)
+                        onTeamScoreChange(
+                            teamId,
+                            currentScore.copy(
+                                declarations = currentScore.declarations.toMutableMap().apply {
+                                    this[declarationType] = count
+                                }
+                            )
+                        )
+                    }
+                }
+            )
+        }
+
+        // Special Points Switches
+        SpecialPoints.entries.forEach { specialPoints ->
+            SpecialPointsSwitch(
+                initialChecked = focusedTeamId?.let { teamId ->
+                    roundScores.scores.getValue(teamId).specialPoints.contains(specialPoints)
+                } ?: false,
+                specialPoints = specialPoints,
+                onCheckedChange = { checked ->
+                    focusedTeamId?.let { teamId ->
+                        val currentScore = roundScores.scores.getValue(teamId)
+                        onTeamScoreChange(
+                            teamId,
+                            currentScore.copy(
+                                specialPoints = currentScore.specialPoints.toMutableSet().apply {
+                                    if (checked) add(specialPoints) else remove(specialPoints)
+                                }
+                            )
+                        )
+                    }
+                }
+            )
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -116,9 +172,10 @@ private fun BottomSheetContent(
 
 @Composable
 private fun TeamScoreInputs(
+    onFocused: (Long) -> Unit,
     teams: List<TeamUiState>,
-    teamScores: Map<Long, TeamScore>,
-    onTeamScoreChange: (Long, TeamScore) -> Unit
+    roundScores: RoundScores,
+    onTeamScoreChange: (Long, RoundScore) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -127,69 +184,23 @@ private fun TeamScoreInputs(
         verticalAlignment = Alignment.CenterVertically
     ) {
         teams.forEachIndexed { index, team ->
-            TeamScoreInput(
-                team = team,
-                teamScore = teamScores.getValue(team.id),
-                onTeamScoreChange = { newScore -> onTeamScoreChange(team.id, newScore) },
-                imeAction = if (index == teams.lastIndex) ImeAction.Done else ImeAction.Next
-            )
-        }
-    }
-}
-
-@Composable
-private fun RowScope.TeamScoreInput(
-    team: TeamUiState,
-    teamScore: TeamScore,
-    onTeamScoreChange: (TeamScore) -> Unit,
-    imeAction: ImeAction
-) {
-    Column(
-        modifier = Modifier
-            .weight(1f)
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // Score Input
-        ScoreInput(
-            value = teamScore.score,
-            label = stringResource(Res.string.team_score, team.name),
-            imeAction = imeAction,
-            onValueChange = { newValue ->
-                val newScoreValue = newValue.toIntOrNull() ?: 0
-                onTeamScoreChange(teamScore.copy(score = newScoreValue))
-            }
-        )
-
-        // Declaration Steppers
-        DeclarationType.entries.forEach { declarationType ->
-            DeclarationStepper(
-                declarationType = declarationType,
-                onCountChange = { count ->
-                    onTeamScoreChange(
-                        teamScore.copy(
-                            declarations = teamScore.declarations.toMutableMap().apply {
-                                this[declarationType] = count
-                            }
-                        )
-                    )
-                }
-            )
-        }
-
-        // Special Points Switches
-        SpecialPoints.entries.forEach { specialPoints ->
-            SpecialPointsSwitch(
-                specialPoints = specialPoints,
-                onCheckedChange = { checked ->
-                    onTeamScoreChange(
-                        teamScore.copy(
-                            specialPoints = teamScore.specialPoints.toMutableSet().apply {
-                                if (checked) add(specialPoints) else remove(specialPoints)
-                            }
-                        )
-                    )
-                }
+            val teamScore = roundScores.scores.getValue(team.id)
+            ScoreInput(
+                value = teamScore.score,
+                label = stringResource(Res.string.team_score, team.name),
+                imeAction = if (index == teams.lastIndex) ImeAction.Done else ImeAction.Next,
+                onValueChange = { newValue ->
+                    val newScoreValue = newValue.toIntOrNull() ?: 0
+                    onTeamScoreChange(team.id, teamScore.copy(score = newScoreValue))
+                },
+                onFocusChanged = { focusState ->
+                    if (focusState.isFocused) {
+                        onFocused(team.id)
+                    }
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(16.dp)
             )
         }
     }
@@ -211,4 +222,16 @@ private fun ConfirmationButtons(
             Text(text = stringResource(Res.string.confirm))
         }
     }
+}
+
+private fun updateScoresForFourPlayers(
+    teamScores: MutableMap<Long, RoundScore>,
+    teamId: Long,
+    newScore: RoundScore,
+    teams: List<TeamUiState>
+) {
+    val otherTeamId = teams.find { it.id != teamId }?.id ?: error("Team not found")
+    teamScores[otherTeamId] = teamScores.getValue(otherTeamId).copy(
+        score = TOTAL_SCORE_WITHOUT_SPECIAL_POINTS - newScore.score
+    )
 }

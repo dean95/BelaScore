@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,11 +27,12 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun DeclarationStepper(
+    initialCount: Int,
     declarationType: DeclarationType,
     modifier: Modifier = Modifier,
     onCountChange: (Int) -> Unit
 ) {
-    var count by rememberSaveable { mutableStateOf(0) }
+    var count by mutableStateOf(initialCount)
 
     Row(
         verticalAlignment = Alignment.CenterVertically,

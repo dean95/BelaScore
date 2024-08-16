@@ -5,6 +5,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusState
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -16,6 +18,7 @@ fun ScoreInput(
     value: Int,
     label: String,
     onValueChange: (String) -> Unit,
+    onFocusChanged: (FocusState) -> Unit,
     imeAction: ImeAction = ImeAction.Default,
     modifier: Modifier = Modifier
 ) {
@@ -25,7 +28,7 @@ fun ScoreInput(
         selection = TextRange(valueStr.length)
     )
     OutlinedTextField(
-        modifier = modifier,
+        modifier = modifier.onFocusChanged(onFocusChanged),
         value = textFieldValue,
         onValueChange = { newValue ->
             val newValueStr = newValue.text

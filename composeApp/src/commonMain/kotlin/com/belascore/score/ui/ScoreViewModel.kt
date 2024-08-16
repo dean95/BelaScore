@@ -7,7 +7,7 @@ import com.belascore.game.domain.model.SpecialPoints
 import com.belascore.game.domain.repository.GameRepository
 import com.belascore.game.domain.repository.ScoreRepository
 import com.belascore.game.domain.repository.TeamRepository
-import com.belascore.score.ui.components.TeamScores
+import com.belascore.score.ui.components.RoundScores
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
@@ -33,11 +33,11 @@ class ScoreViewModel(
     }
 
     fun updateScores(
-        teamScores: TeamScores,
+        roundScores: RoundScores,
         roundNumber: Int
     ) = viewModelScope.launch {
         scoreRepository.insertScores(
-            teamScores.scores.map { (teamId, score) ->
+            roundScores.scores.map { (teamId, score) ->
                 Score(
                     gameId = gameId,
                     teamId = teamId,

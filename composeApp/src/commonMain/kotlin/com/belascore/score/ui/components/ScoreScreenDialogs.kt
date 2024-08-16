@@ -22,7 +22,7 @@ fun ScoreScreenDialogs(
     sheetState: SheetState,
     scoreUiState: ScoreUiState,
     onDismissDialog: () -> Unit,
-    onUpdateScores: (TeamScores, Int) -> Unit,
+    onUpdateScores: (RoundScores, Int) -> Unit,
     onQuitGame: () -> Unit
 ) {
 
