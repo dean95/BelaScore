@@ -1,5 +1,6 @@
 package com.belascore.score.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -115,57 +116,76 @@ private fun BottomSheetContent(
             onFocused = { focusedTeamId = it }
         )
 
-        // Declaration Steppers
-        DeclarationType.entries.forEach { declarationType ->
-            DeclarationStepper(
-                initialCount = focusedTeamId?.let { teamId ->
-                    roundScores.scores.getValue(teamId).declarations[declarationType]
-                } ?: 0,
-                declarationType = declarationType,
-                onCountChange = { count ->
-                    focusedTeamId?.let { teamId ->
-                        val currentScore = roundScores.scores.getValue(teamId)
-                        onTeamScoreChange(
-                            teamId,
-                            currentScore.copy(
-                                declarations = currentScore.declarations.toMutableMap().apply {
-                                    this[declarationType] = count
-                                }
-                            )
-                        )
-                    }
-                }
-            )
-        }
+        AnimatedVisibility(visible = focusedTeamId != null) {
+            Column {
+                FocusedTeamOptions(
+                    focusedTeamId = focusedTeamId,
+                    roundScores = roundScores,
+                    onTeamScoreChange = onTeamScoreChange
+                )
+            }
 
-        // Special Points Switches
-        SpecialPoints.entries.forEach { specialPoints ->
-            SpecialPointsSwitch(
-                initialChecked = focusedTeamId?.let { teamId ->
-                    roundScores.scores.getValue(teamId).specialPoints.contains(specialPoints)
-                } ?: false,
-                specialPoints = specialPoints,
-                onCheckedChange = { checked ->
-                    focusedTeamId?.let { teamId ->
-                        val currentScore = roundScores.scores.getValue(teamId)
-                        onTeamScoreChange(
-                            teamId,
-                            currentScore.copy(
-                                specialPoints = currentScore.specialPoints.toMutableSet().apply {
-                                    if (checked) add(specialPoints) else remove(specialPoints)
-                                }
-                            )
-                        )
-                    }
-                }
-            )
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
         ConfirmationButtons(
+            confirmEnabled = focusedTeamId != null,
             onConfirm = onConfirm,
             onCancel = onCancel
+        )
+    }
+}
+
+@Composable
+private fun FocusedTeamOptions(
+    focusedTeamId: Long?,
+    roundScores: RoundScores,
+    onTeamScoreChange: (Long, RoundScore) -> Unit
+) {
+    // Declaration Steppers
+    DeclarationType.entries.forEach { declarationType ->
+        DeclarationStepper(
+            initialCount = focusedTeamId?.let { teamId ->
+                roundScores.scores.getValue(teamId).declarations[declarationType]
+            } ?: 0,
+            declarationType = declarationType,
+            onCountChange = { count ->
+                focusedTeamId?.let { teamId ->
+                    val currentScore = roundScores.scores.getValue(teamId)
+                    onTeamScoreChange(
+                        teamId,
+                        currentScore.copy(
+                            declarations = currentScore.declarations.toMutableMap().apply {
+                                this[declarationType] = count
+                            }
+                        )
+                    )
+                }
+            }
+        )
+    }
+
+    // Special Points Switches
+    SpecialPoints.entries.forEach { specialPoints ->
+        SpecialPointsSwitch(
+            initialChecked = focusedTeamId?.let { teamId ->
+                roundScores.scores.getValue(teamId).specialPoints.contains(specialPoints)
+            } ?: false,
+            specialPoints = specialPoints,
+            onCheckedChange = { checked ->
+                focusedTeamId?.let { teamId ->
+                    val currentScore = roundScores.scores.getValue(teamId)
+                    onTeamScoreChange(
+                        teamId,
+                        currentScore.copy(
+                            specialPoints = currentScore.specialPoints.toMutableSet().apply {
+                                if (checked) add(specialPoints) else remove(specialPoints)
+                            }
+                        )
+                    )
+                }
+            }
         )
     }
 }
@@ -208,6 +228,7 @@ private fun TeamScoreInputs(
 
 @Composable
 private fun ConfirmationButtons(
+    confirmEnabled: Boolean,
     onConfirm: () -> Unit,
     onCancel: () -> Unit
 ) {
@@ -218,7 +239,10 @@ private fun ConfirmationButtons(
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        Button(onClick = onConfirm) {
+        Button(
+            enabled = confirmEnabled,
+            onClick = onConfirm
+        ) {
             Text(text = stringResource(Res.string.confirm))
         }
     }
