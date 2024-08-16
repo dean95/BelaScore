@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import belascore.composeapp.generated.resources.Res
 import belascore.composeapp.generated.resources.cancel
 import belascore.composeapp.generated.resources.confirm
-import belascore.composeapp.generated.resources.team_score
 import com.belascore.game.domain.model.DeclarationType
 import com.belascore.game.domain.model.SpecialPoints
 import com.belascore.game.domain.model.TOTAL_SCORE_WITHOUT_SPECIAL_POINTS
@@ -240,7 +239,7 @@ private fun RenderTeamScoreInputs(
         val teamScore = roundScores.scores.getValue(team.id)
         ScoreInput(
             value = teamScore.score,
-            label = stringResource(Res.string.team_score, team.name),
+            label = team.name,
             imeAction = if (index == teams.lastIndex) ImeAction.Done else ImeAction.Next,
             onValueChange = { newValue ->
                 val newScoreValue = newValue.toIntOrNull() ?: 0

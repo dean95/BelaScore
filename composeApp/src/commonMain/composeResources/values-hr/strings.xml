@@ -6,7 +6,6 @@
     <string name="winning_score">Pobjednički Rezultat</string>
     <string name="start_game">Početak Igre</string>
     <string name="team_name">Naziv Tima %1$d</string>
-    <string name="team_score">Rezultat tima %1$s</string>
     <string name="confirm">Potvrdi</string>
     <string name="cancel">Odustani</string>
     <string name="bela">Bela</string>
