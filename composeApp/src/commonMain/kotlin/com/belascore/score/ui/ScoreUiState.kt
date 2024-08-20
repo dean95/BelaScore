@@ -1,6 +1,7 @@
 package com.belascore.score.ui
 
 import com.belascore.newGame.ui.PlayerCount
+import com.belascore.score.ui.components.RoundScores
 
 data class ScoreUiState(
     val teams: List<TeamUiState> = emptyList(),
@@ -11,8 +12,7 @@ data class ScoreUiState(
 )
 
 data class RoundItemUiState(
-    val roundNumber: Int,
-    val scores: Map<Long, Int>
+    val roundScores: RoundScores
 )
 
 data class TeamUiState(
@@ -21,9 +21,9 @@ data class TeamUiState(
     val totalScore: Int
 )
 
-enum class DialogState {
-    None,
-    ScoreInput,
-    GameResult,
-    QuitConfirmation
+sealed class DialogState {
+    data object None : DialogState()
+    data class ScoreInput(val roundScores: RoundScores? = null) : DialogState()
+    data object GameResult : DialogState()
+    data object QuitConfirmation : DialogState()
 }

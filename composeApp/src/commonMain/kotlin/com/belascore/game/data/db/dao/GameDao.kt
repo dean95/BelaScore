@@ -2,6 +2,7 @@ package com.belascore.game.data.db.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.belascore.game.data.db.model.GameEntity
@@ -49,7 +50,7 @@ interface GameDao {
 
     // --- Score ---
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertScores(scores: List<ScoreEntity>)
 
     @Query("SELECT * FROM scoreEntity WHERE gameId = :gameId")

@@ -16,6 +16,7 @@
     <string name="quit_game_title">Odustati od igre?</string>
     <string name="quit_game_message">Jeste li sigurni da želite odustati od trenutne igre? Napredak će biti izgubljen.</string>
     <string name="keep_playing">Nastavi Igrati</string>
+    <string name="edit_score">Uredi rezultat</string>
 
     <string name="cd_back">Natrag</string>
     <string name="cd_add_scores">Dodaj rezultate</string>

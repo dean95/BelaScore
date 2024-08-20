@@ -28,7 +28,7 @@ fun ScoreScreenDialogs(
 
     val scope = rememberCoroutineScope()
     when (currentDialog) {
-        DialogState.ScoreInput -> {
+        is DialogState.ScoreInput -> {
             ScoreInputBottomSheet(
                 sheetState = sheetState,
                 onDismissRequest = {
@@ -45,7 +45,8 @@ fun ScoreScreenDialogs(
                             if (!sheetState.isVisible) {
                                 onUpdateScores(
                                     teamScores,
-                                    scoreUiState.rounds.size + 1
+                                    currentDialog.roundScores?.roundNumber
+                                        ?: (scoreUiState.rounds.size + 1)
                                 )
                                 onDismissDialog()
                             }
@@ -53,6 +54,9 @@ fun ScoreScreenDialogs(
                 },
                 teams = scoreUiState.teams,
                 playerCount = scoreUiState.playerCount,
+                roundScores = currentDialog.roundScores ?: RoundScores(
+                    roundNumber = scoreUiState.rounds.size + 1,
+                    scores = scoreUiState.teams.associate { it.id to RoundScore() }),
                 modifier = Modifier
                     .fillMaxHeight()
                     .statusBarsPadding()

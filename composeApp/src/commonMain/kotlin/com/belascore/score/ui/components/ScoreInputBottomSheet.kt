@@ -41,13 +41,17 @@ import org.jetbrains.compose.resources.stringResource
 
 // Data class to hold scores for a round
 data class RoundScore(
-    val score: Int = 0,
+    val baseScore: Int = 0,
+    val totalScore: Int = 0,
     val declarations: MutableMap<DeclarationType, Int> = mutableMapOf(),
     val specialPoints: MutableSet<SpecialPoints> = mutableSetOf()
 )
 
 // Data class to hold scores for all teams in a round
-data class RoundScores(val scores: Map<Long, RoundScore>)
+data class RoundScores(
+    val roundNumber: Int,
+    val scores: Map<Long, RoundScore>
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,14 +59,13 @@ fun ScoreInputBottomSheet(
     sheetState: SheetState,
     teams: List<TeamUiState>,
     playerCount: PlayerCount,
+    roundScores: RoundScores,
     onDismissRequest: () -> Unit,
     onConfirm: (RoundScores) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var roundScores by remember {
-        mutableStateOf(
-            RoundScores(scores = teams.associate { it.id to RoundScore() })
-        )
+    var roundScoresState by remember {
+        mutableStateOf(roundScores)
     }
 
     ModalBottomSheet(
@@ -72,10 +75,10 @@ fun ScoreInputBottomSheet(
     ) {
         BottomSheetContent(
             teams = teams,
-            roundScores = roundScores,
+            roundScores = roundScoresState,
             onTeamScoreChange = { teamId, newScore ->
-                roundScores = roundScores.copy(
-                    scores = roundScores.scores.toMutableMap().apply {
+                roundScoresState = roundScoresState.copy(
+                    scores = roundScoresState.scores.toMutableMap().apply {
                         this[teamId] = newScore
                         if (playerCount == PlayerCount.FOUR) {
                             updateScoresForFourPlayers(
@@ -88,7 +91,7 @@ fun ScoreInputBottomSheet(
                     }
                 )
             },
-            onConfirm = { onConfirm(roundScores) },
+            onConfirm = { onConfirm(roundScoresState) },
             onCancel = onDismissRequest
         )
     }
@@ -254,12 +257,12 @@ private fun RenderTeamScoreInputs(
     teams.forEachIndexed { index, team ->
         val teamScore = roundScores.scores.getValue(team.id)
         ScoreInput(
-            value = teamScore.score,
+            value = teamScore.baseScore,
             label = team.name,
             imeAction = if (index == teams.lastIndex) ImeAction.Done else ImeAction.Next,
             onValueChange = { newValue ->
                 val newScoreValue = newValue.toIntOrNull() ?: 0
-                onTeamScoreChange(team.id, teamScore.copy(score = newScoreValue))
+                onTeamScoreChange(team.id, teamScore.copy(baseScore = newScoreValue))
             },
             onFocusChanged = { focusState ->
                 if (focusState.isFocused) {
@@ -304,6 +307,6 @@ private fun updateScoresForFourPlayers(
 ) {
     val otherTeamId = teams.find { it.id != teamId }?.id ?: error("Team not found")
     teamScores[otherTeamId] = teamScores.getValue(otherTeamId).copy(
-        score = TOTAL_SCORE_WITHOUT_SPECIAL_POINTS - newScore.score
+        baseScore = TOTAL_SCORE_WITHOUT_SPECIAL_POINTS - newScore.baseScore
     )
 }

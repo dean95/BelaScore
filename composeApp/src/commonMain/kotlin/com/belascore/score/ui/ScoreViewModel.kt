@@ -7,6 +7,7 @@ import com.belascore.game.domain.repository.GameRepository
 import com.belascore.game.domain.repository.ScoreRepository
 import com.belascore.game.domain.repository.TeamRepository
 import com.belascore.game.domain.useCase.InsertScoresUseCase
+import com.belascore.score.ui.components.RoundScore
 import com.belascore.score.ui.components.RoundScores
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -42,7 +43,7 @@ class ScoreViewModel(
                 InsertScoresUseCase.Param(
                     gameId = gameId,
                     teamId = teamId,
-                    score = score.score,
+                    score = score.baseScore,
                     roundNumber = roundNumber,
                     declarations = score.declarations,
                     specialPoints = score.specialPoints
@@ -94,10 +95,21 @@ class ScoreViewModel(
             val roundItems = groupedByRound.map { (round, scores) ->
                 val teamScores = scores.associateBy(Score::teamId)
                 RoundItemUiState(
-                    roundNumber = round,
-                    scores = teamScores.mapValues { (_, score) -> score.totalScore }
+                    roundScores = RoundScores(
+                        roundNumber = round,
+                        scores = teamScores.mapValues { (_, score) ->
+                            score.run {
+                                RoundScore(
+                                    baseScore = baseScore,
+                                    totalScore = totalScore,
+                                    declarations = declarations.toMutableMap(),
+                                    specialPoints = specialPoints.toMutableSet()
+                                )
+                            }
+                        }
+                    )
                 )
-            }.sortedBy(RoundItemUiState::roundNumber)
+            }.sortedBy { it.roundScores.roundNumber }
 
             _uiState.update {
                 it.copy(

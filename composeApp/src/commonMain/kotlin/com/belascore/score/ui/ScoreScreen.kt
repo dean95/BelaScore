@@ -13,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -32,7 +32,7 @@ fun ScoreScreen(
     onCloseClick: () -> Unit
 ) = Screen {
     val scoreUiState by viewModel.uiState.collectAsStateWithLifecycle()
-    var currentDialog: DialogState by rememberSaveable { mutableStateOf(DialogState.None) }
+    var currentDialog: DialogState by remember { mutableStateOf(DialogState.None) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val isGameInProgress = scoreUiState.winningTeams.isEmpty()
 
@@ -60,13 +60,16 @@ fun ScoreScreen(
                 isGameInProgress = isGameInProgress
             ) {
                 if (isGameInProgress) {
-                    currentDialog = DialogState.ScoreInput
+                    currentDialog = DialogState.ScoreInput()
                 }
             }
         }
     ) { paddingValues ->
         ScoreContent(
             scoreUiState = scoreUiState,
+            onEditScoreClick = {
+                currentDialog = DialogState.ScoreInput(it.roundScores)
+            },
             modifier = Modifier
                 .verticalScroll(state = rememberScrollState())
                 .fillMaxWidth()
