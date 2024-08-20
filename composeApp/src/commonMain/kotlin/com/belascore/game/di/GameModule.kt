@@ -11,6 +11,7 @@ import com.belascore.game.data.repository.TeamRepositoryImpl
 import com.belascore.game.domain.repository.GameRepository
 import com.belascore.game.domain.repository.ScoreRepository
 import com.belascore.game.domain.repository.TeamRepository
+import com.belascore.game.domain.useCase.InsertScoresUseCase
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -28,4 +29,6 @@ val gameModule = module {
     singleOf(::ScoreRepositoryImpl).bind<ScoreRepository>()
 
     singleOf(::TeamRepositoryImpl).bind<TeamRepository>()
+
+    singleOf(::InsertScoresUseCase)
 }

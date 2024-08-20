@@ -4,6 +4,9 @@ import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
+import androidx.room.TypeConverters
+import com.belascore.game.data.db.converters.DeclarationMapConverter
+import com.belascore.game.data.db.converters.SpecialPointsConverter
 import com.belascore.game.data.db.dao.GameDao
 import com.belascore.game.data.db.model.GameEntity
 import com.belascore.game.data.db.model.GameTeamCrossRef
@@ -16,6 +19,7 @@ const val DATABASE_NAME = "game_database.db"
     entities = [GameEntity::class, TeamEntity::class, ScoreEntity::class, GameTeamCrossRef::class],
     version = 1
 )
+@TypeConverters(DeclarationMapConverter::class, SpecialPointsConverter::class)
 @ConstructedBy(GameDatabaseConstructor::class)
 abstract class GameDatabase : RoomDatabase() {
 

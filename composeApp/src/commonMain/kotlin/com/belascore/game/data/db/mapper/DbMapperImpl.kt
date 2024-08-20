@@ -3,8 +3,10 @@ package com.belascore.game.data.db.mapper
 import com.belascore.game.data.db.model.GameEntity
 import com.belascore.game.data.db.model.ScoreEntity
 import com.belascore.game.data.db.model.TeamEntity
+import com.belascore.game.domain.model.DeclarationType
 import com.belascore.game.domain.model.Game
 import com.belascore.game.domain.model.Score
+import com.belascore.game.domain.model.SpecialPoints
 import com.belascore.game.domain.model.Team
 import com.belascore.newGame.ui.PlayerCount
 
@@ -23,13 +25,25 @@ internal class DbMapperImpl : DbMapper {
             name = team.name
         )
 
-    override fun toScoreEntity(score: Score) =
-        ScoreEntity(
-            gameId = score.gameId,
-            teamId = score.teamId,
-            roundNumber = score.roundNumber,
-            score = score.score
-        )
+    override fun toScoreEntity(
+        gameId: Long,
+        teamId: Long,
+        roundNumber: Int,
+        baseScore: Int,
+        declarations: Map<DeclarationType, Int>,
+        specialPoints: Set<SpecialPoints>
+    ) = ScoreEntity(
+        gameId = gameId,
+        teamId = teamId,
+        roundNumber = roundNumber,
+        baseScore = baseScore,
+        declarations = declarations,
+        specialPoints = specialPoints,
+        totalScore = baseScore +
+                declarations
+                    .map { (declaration, count) -> declaration.points * count }
+                    .sum() + specialPoints.sumOf(SpecialPoints::points)
+    )
 
     override fun fromGameEntity(entity: GameEntity) = Game(
         id = entity.id,
@@ -44,11 +58,15 @@ internal class DbMapperImpl : DbMapper {
             name = entity.name
         )
 
-    override fun fromScoreEntity(entity: ScoreEntity) =
+    override fun fromScoreEntity(entity: ScoreEntity) = entity.run {
         Score(
-            gameId = entity.gameId,
-            teamId = entity.teamId,
-            roundNumber = entity.roundNumber,
-            score = entity.score
+            gameId = gameId,
+            teamId = teamId,
+            roundNumber = roundNumber,
+            baseScore = baseScore,
+            totalScore = totalScore,
+            declarations = declarations,
+            specialPoints = specialPoints
         )
+    }
 }

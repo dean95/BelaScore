@@ -3,10 +3,10 @@ package com.belascore.score.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.belascore.game.domain.model.Score
-import com.belascore.game.domain.model.SpecialPoints
 import com.belascore.game.domain.repository.GameRepository
 import com.belascore.game.domain.repository.ScoreRepository
 import com.belascore.game.domain.repository.TeamRepository
+import com.belascore.game.domain.useCase.InsertScoresUseCase
 import com.belascore.score.ui.components.RoundScores
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,7 +20,8 @@ class ScoreViewModel(
     private val gameId: Long,
     private val teamRepository: TeamRepository,
     private val scoreRepository: ScoreRepository,
-    private val gameRepository: GameRepository
+    private val gameRepository: GameRepository,
+    private val insertScoresUseCase: InsertScoresUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ScoreUiState())
@@ -36,19 +37,15 @@ class ScoreViewModel(
         roundScores: RoundScores,
         roundNumber: Int
     ) = viewModelScope.launch {
-        scoreRepository.insertScores(
+        insertScoresUseCase(
             roundScores.scores.map { (teamId, score) ->
-                Score(
+                InsertScoresUseCase.Param(
                     gameId = gameId,
                     teamId = teamId,
-                    score = score.score +
-                            score
-                                .declarations
-                                .map { (declaration, count) -> declaration.points * count }
-                                .sum()
-                            +
-                            score.specialPoints.sumOf(SpecialPoints::points),
-                    roundNumber = roundNumber
+                    score = score.score,
+                    roundNumber = roundNumber,
+                    declarations = score.declarations,
+                    specialPoints = score.specialPoints
                 )
             }
         )
@@ -82,7 +79,7 @@ class ScoreViewModel(
         ) { teams, scores ->
             val teamTotalScores = scores
                 .groupBy(Score::teamId)
-                .mapValues { (_, scores) -> scores.sumOf(Score::score) }
+                .mapValues { (_, scores) -> scores.sumOf(Score::totalScore) }
 
             val teamItems = teams.map { team ->
                 TeamUiState(
@@ -98,7 +95,7 @@ class ScoreViewModel(
                 val teamScores = scores.associateBy(Score::teamId)
                 RoundItemUiState(
                     roundNumber = round,
-                    scores = teamScores.mapValues { (_, score) -> score.score }
+                    scores = teamScores.mapValues { (_, score) -> score.totalScore }
                 )
             }.sortedBy(RoundItemUiState::roundNumber)
 
@@ -120,7 +117,7 @@ class ScoreViewModel(
         ) { scores, winningTeams ->
             val teamTotalScores = scores
                 .groupBy(Score::teamId)
-                .mapValues { (_, scores) -> scores.sumOf(Score::score) }
+                .mapValues { (_, scores) -> scores.sumOf(Score::totalScore) }
 
             if (winningTeams.isNotEmpty()) {
                 endGame()

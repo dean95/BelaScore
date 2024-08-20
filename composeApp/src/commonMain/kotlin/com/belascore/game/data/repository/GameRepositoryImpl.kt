@@ -43,16 +43,16 @@ internal class GameRepositoryImpl(
             scoresForGame
                 .groupBy(ScoreEntity::teamId)
                 .filter { (_, scoresForTeam) ->
-                    scoresForTeam.sumOf(ScoreEntity::score) >= winningScore
+                    scoresForTeam.sumOf(ScoreEntity::totalScore) >= winningScore
                 }
                 .let { qualifiedTeams ->
 
                     val maxScore = qualifiedTeams.maxOfOrNull { (_, scoresForTeam) ->
-                        scoresForTeam.sumOf(ScoreEntity::score)
+                        scoresForTeam.sumOf(ScoreEntity::totalScore)
                     }
 
                     qualifiedTeams.filterValues { scoresForTeam ->
-                        scoresForTeam.sumOf(ScoreEntity::score) == maxScore
+                        scoresForTeam.sumOf(ScoreEntity::totalScore) == maxScore
                     }
                 }
                 .map { (teamId, _) ->

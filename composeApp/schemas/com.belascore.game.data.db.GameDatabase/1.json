@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "7977acdb5a34c973b3023cbaed601506",
+    "identityHash": "193f005bc5a7f02b39631ef64f33b144",
     "entities": [
       {
         "tableName": "GameEntity",
@@ -66,7 +66,7 @@
       },
       {
         "tableName": "ScoreEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`gameId` INTEGER NOT NULL, `teamId` INTEGER NOT NULL, `roundNumber` INTEGER NOT NULL, `score` INTEGER NOT NULL, PRIMARY KEY(`gameId`, `teamId`, `roundNumber`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`gameId` INTEGER NOT NULL, `teamId` INTEGER NOT NULL, `roundNumber` INTEGER NOT NULL, `baseScore` INTEGER NOT NULL, `totalScore` INTEGER NOT NULL, `declarations` TEXT NOT NULL, `specialPoints` TEXT NOT NULL, PRIMARY KEY(`gameId`, `teamId`, `roundNumber`))",
         "fields": [
           {
             "fieldPath": "gameId",
@@ -87,9 +87,27 @@
             "notNull": true
           },
           {
-            "fieldPath": "score",
-            "columnName": "score",
+            "fieldPath": "baseScore",
+            "columnName": "baseScore",
             "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "totalScore",
+            "columnName": "totalScore",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "declarations",
+            "columnName": "declarations",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "specialPoints",
+            "columnName": "specialPoints",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
@@ -161,7 +179,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7977acdb5a34c973b3023cbaed601506')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '193f005bc5a7f02b39631ef64f33b144')"
     ]
   }
 }
