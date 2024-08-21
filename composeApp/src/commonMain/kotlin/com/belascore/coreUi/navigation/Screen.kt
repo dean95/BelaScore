@@ -12,3 +12,6 @@ data object NewGame
 data class Score(
     val gameId: Long
 )
+
+@Serializable
+data object GameHistory

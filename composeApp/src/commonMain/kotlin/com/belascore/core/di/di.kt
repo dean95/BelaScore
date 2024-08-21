@@ -1,6 +1,7 @@
 package com.belascore.core.di
 
 import com.belascore.game.di.gameModule
+import com.belascore.gameHistory.di.gameHistoryModule
 import com.belascore.home.di.homeModule
 import com.belascore.newGame.di.newGameModule
 import com.belascore.score.di.scoreModule
@@ -18,7 +19,8 @@ fun initKoin(config: KoinAppDeclaration? = null) {
             platformModule,
             newGameModule,
             scoreModule,
-            homeModule
+            homeModule,
+            gameHistoryModule
         )
     }
 }

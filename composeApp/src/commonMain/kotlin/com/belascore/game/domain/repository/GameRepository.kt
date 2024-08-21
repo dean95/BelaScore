@@ -21,5 +21,7 @@ interface GameRepository {
 
     fun observeActiveGame(): Flow<Game?>
 
+    fun observePastGames(): Flow<List<Game>>
+
     fun observeGameById(gameId: Long): Flow<Game>
 }

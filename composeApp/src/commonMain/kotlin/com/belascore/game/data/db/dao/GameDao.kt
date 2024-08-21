@@ -28,6 +28,9 @@ interface GameDao {
     @Query("SELECT * FROM GameEntity WHERE isInProgress = 1")
     fun observeActiveGame(): Flow<GameEntity?>
 
+    @Query("SELECT * FROM GameEntity WHERE isInProgress = 0")
+    fun observePastGames(): Flow<List<GameEntity>>
+
     @Query("UPDATE GameEntity SET isInProgress = 0 WHERE id = :gameId")
     suspend fun endGame(gameId: Long)
 

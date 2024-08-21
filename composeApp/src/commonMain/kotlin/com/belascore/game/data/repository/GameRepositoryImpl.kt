@@ -71,6 +71,11 @@ internal class GameRepositoryImpl(
             .observeActiveGame()
             .map { it?.let(dbMapper::fromGameEntity) }
 
+    override fun observePastGames(): Flow<List<Game>> =
+        gameDao
+            .observePastGames()
+            .map { it.map(dbMapper::fromGameEntity) }
+
     override fun observeGameById(gameId: Long): Flow<Game> =
         gameDao
             .observeGameById(gameId = gameId)

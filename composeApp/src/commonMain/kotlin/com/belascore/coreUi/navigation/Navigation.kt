@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.belascore.gameHistory.ui.GameHistoryScreen
 import com.belascore.home.ui.HomeScreen
 import com.belascore.newGame.ui.NewGameScreen
 import com.belascore.score.ui.ScoreScreen
@@ -30,7 +31,7 @@ fun Navigation() {
                         navController.navigate(NewGame)
                     },
                     onGameHistoryClick = {
-                        /* no-op */
+                        navController.navigate(GameHistory)
                     },
                     onGameResumed = {
                         navController.navigate(Score(gameId = it))
@@ -42,7 +43,7 @@ fun Navigation() {
                 NewGameScreen(
                     viewModel = koinViewModel(),
                     onStartGameClick = { navController.navigate(Score(gameId = it)) },
-                    onBackClick = { navController.navigateUp() }
+                    onBackClick = navController::navigateUp
                 )
             }
 
@@ -56,6 +57,16 @@ fun Navigation() {
                         inclusive = false
                     )
                 }
+            }
+
+            composable<GameHistory> {
+                GameHistoryScreen(
+                    viewModel = koinViewModel(),
+                    onGameClick = {
+                        // TODO: Navigate to score screen
+                    },
+                    onBackClick = navController::navigateUp
+                )
             }
         }
     }
