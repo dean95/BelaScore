@@ -1,12 +1,12 @@
 package com.belascore.gameHistory.ui
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,16 +41,24 @@ fun GameHistoryScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            contentPadding = PaddingValues(16.dp)
         ) {
-            items(gameHistoryUiState.games) { game ->
+            items(gameHistoryUiState.games.size) { index ->
+                val game = gameHistoryUiState.games[index]
                 GameItem(
                     game = game,
                     modifier = Modifier
                         .clickable { onGameClick(game) }
-                        .padding(horizontal = 16.dp)
+                        .padding(all = 16.dp)
                 )
+
+                if (index < gameHistoryUiState.games.lastIndex) {
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    )
+                }
             }
         }
     }
