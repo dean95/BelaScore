@@ -29,6 +29,7 @@ import com.belascore.score.ui.components.ScoreScreenTopBar
 @Composable
 fun ScoreScreen(
     viewModel: ScoreViewModel,
+    showGameResultDialog: Boolean,
     onCloseClick: () -> Unit
 ) = Screen {
     val scoreUiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -41,8 +42,7 @@ fun ScoreScreen(
         currentDialog = DialogState.QuitConfirmation
     }
 
-    // FIXME This will showing GameResult dialog when navigating from history.
-    if (scoreUiState.winningTeams.isNotEmpty()) {
+    if (showGameResultDialog && scoreUiState.winningTeams.isNotEmpty()) {
         currentDialog = DialogState.GameResult
     }
 

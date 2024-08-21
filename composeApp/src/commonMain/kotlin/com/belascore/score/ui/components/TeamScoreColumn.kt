@@ -58,6 +58,7 @@ fun RowScope.TeamScoreColumn(
                     .pointerInput(Unit) {
                         detectTapGestures(
                             onLongPress = {
+                                // FIXME This is not working properly when game is not in progress
                                 showMenu = true
                             }
                         )

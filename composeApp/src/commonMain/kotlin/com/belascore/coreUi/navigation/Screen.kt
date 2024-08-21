@@ -10,7 +10,9 @@ data object NewGame
 
 @Serializable
 data class Score(
-    val gameId: Long
+    val gameId: Long,
+    val source: String? = null,
+    val showGameResultDialog: Boolean = false
 )
 
 @Serializable

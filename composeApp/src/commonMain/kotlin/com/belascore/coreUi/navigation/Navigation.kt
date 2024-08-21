@@ -34,7 +34,7 @@ fun Navigation() {
                         navController.navigate(GameHistory)
                     },
                     onGameResumed = {
-                        navController.navigate(Score(gameId = it))
+                        navController.navigate(route = Score(gameId = it))
                     }
                 )
             }
@@ -42,7 +42,15 @@ fun Navigation() {
             composable<NewGame> {
                 NewGameScreen(
                     viewModel = koinViewModel(),
-                    onStartGameClick = { navController.navigate(Score(gameId = it)) },
+                    onStartGameClick = {
+                        navController.navigate(
+                            route = Score(
+                                gameId = it,
+                                source = NewGame.toString(),
+                                showGameResultDialog = true
+                            )
+                        )
+                    },
                     onBackClick = navController::navigateUp
                 )
             }
@@ -50,12 +58,17 @@ fun Navigation() {
             composable<Score> {
                 val args = it.toRoute<Score>()
                 ScoreScreen(
-                    viewModel = koinViewModel(parameters = { parametersOf(args.gameId) })
+                    viewModel = koinViewModel(parameters = { parametersOf(args.gameId) }),
+                    showGameResultDialog = args.showGameResultDialog
                 ) {
-                    navController.popBackStack(
-                        route = Home,
-                        inclusive = false
-                    )
+                    when (args.source) {
+                        NewGame.toString() -> navController.popBackStack(
+                            route = Home,
+                            inclusive = false
+                        )
+
+                        else -> navController.navigateUp()
+                    }
                 }
             }
 
@@ -63,7 +76,12 @@ fun Navigation() {
                 GameHistoryScreen(
                     viewModel = koinViewModel(),
                     onGameClick = {
-                        // TODO: Navigate to score screen
+                        navController.navigate(
+                            route = Score(
+                                gameId = it.id,
+                                source = GameHistory.toString()
+                            )
+                        )
                     },
                     onBackClick = navController::navigateUp
                 )
