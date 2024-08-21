@@ -42,7 +42,7 @@ fun ScoreScreen(
         currentDialog = DialogState.QuitConfirmation
     }
 
-    if (showGameResultDialog && scoreUiState.winningTeams.isNotEmpty()) {
+    if (showGameResultDialog && !isGameInProgress) {
         currentDialog = DialogState.GameResult
     }
 

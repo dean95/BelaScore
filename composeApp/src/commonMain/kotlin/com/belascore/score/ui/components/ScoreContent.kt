@@ -17,6 +17,7 @@ fun ScoreContent(
             TeamScoreColumn(
                 team = team,
                 rounds = scoreUiState.rounds,
+                isGameInProgress = scoreUiState.winningTeams.isEmpty(),
                 onEditScoreClick = onEditScoreClick
             )
         }

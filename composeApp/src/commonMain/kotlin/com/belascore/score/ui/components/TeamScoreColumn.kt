@@ -31,6 +31,7 @@ import org.jetbrains.compose.resources.stringResource
 fun RowScope.TeamScoreColumn(
     team: TeamUiState,
     rounds: List<RoundItemUiState>,
+    isGameInProgress: Boolean,
     onEditScoreClick: (RoundItemUiState) -> Unit
 ) {
     Column(
@@ -58,8 +59,7 @@ fun RowScope.TeamScoreColumn(
                     .pointerInput(Unit) {
                         detectTapGestures(
                             onLongPress = {
-                                // FIXME This is not working properly when game is not in progress
-                                showMenu = true
+                                showMenu = isGameInProgress
                             }
                         )
                     }
