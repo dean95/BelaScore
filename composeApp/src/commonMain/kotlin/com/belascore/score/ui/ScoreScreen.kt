@@ -56,10 +56,8 @@ fun ScoreScreen(
             }
         },
         floatingActionButton = {
-            AddScoreFloatingActionButton(
-                isGameInProgress = isGameInProgress
-            ) {
-                if (isGameInProgress) {
+            if (isGameInProgress) {
+                AddScoreFloatingActionButton {
                     currentDialog = DialogState.ScoreInput()
                 }
             }
