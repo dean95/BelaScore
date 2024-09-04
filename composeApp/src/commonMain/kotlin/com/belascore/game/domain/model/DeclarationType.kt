@@ -1,5 +1,8 @@
 package com.belascore.game.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 enum class DeclarationType(val points: Int) {
     TWENTY(20),
     FIFTY(50),
