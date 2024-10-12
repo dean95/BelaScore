@@ -129,7 +129,6 @@ private fun BottomSheetContent(
                     onTeamScoreChange = onTeamScoreChange
                 )
             }
-
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -234,7 +233,8 @@ private fun TeamScoreInputs(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp)
+                .padding(vertical = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             RenderTeamScoreInputs(
                 teams = teams,
