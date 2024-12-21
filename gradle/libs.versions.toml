@@ -17,8 +17,8 @@ ksp = "2.1.0-1.0.29"
 androidx-room = "2.7.0-alpha12"
 androidx-sqliteBundled = "2.5.0-alpha12"
 koin = "4.0.0"
-kotlinx-serialization = "1.7.0"
-kotlinx-coroutines = "1.9.0-RC"
+kotlinx-serialization = "1.7.3"
+kotlinx-coroutines = "1.9.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
